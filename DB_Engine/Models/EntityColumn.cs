@@ -12,7 +12,7 @@ namespace DB_Engine.Models
         [JsonPropertyName("name")]
         public string Name { get; set; }
 
-        [JsonPropertyName("type")]
+        [JsonPropertyName("dataValueTypeId")]
         public Guid DataValueType { get; set; }
 
         [JsonPropertyName("validators")]

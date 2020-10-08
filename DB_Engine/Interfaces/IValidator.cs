@@ -16,6 +16,9 @@ namespace DB_Engine.Interfaces
         [JsonPropertyName("type")]
         string Type { get; }
 
+        //[JsonPropertyName("dataValueTypeId")]
+        //Guid DataValueType { get; }
+
         bool IsValid(object value);
     }
 

@@ -13,7 +13,7 @@ namespace DB_Engine.Models
         [JsonPropertyName("dbInfo")]
         public DatabaseInfo Info{ get; set; }
 
-        [JsonPropertyName("tables")]
+        [JsonPropertyName("entities")]
         public List<Entity> Entities { get; set; }
 
         public DataBase()

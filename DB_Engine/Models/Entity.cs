@@ -15,7 +15,7 @@ namespace DB_Engine.Models
         //[JsonConverter(typeof(SourceListConverter))]
         public List<ISource> Sources { get; set; }
 
-        [JsonPropertyName("schema")]
+        [JsonPropertyName("entitySchema")]
         public EntitySchema Schema { get; set; }
 
         [JsonIgnore]
