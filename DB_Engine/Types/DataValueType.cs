@@ -39,6 +39,42 @@ namespace DB_Engine.Types
                     throw new DataValueTypeException($"Incorrect DataValueTypeId specified. IncorrectDataValueTypeId = \"{dataValueTypeId}\"");
             }
         }
+
+        public static Type GetDataValueType(Guid dataValueTypeId)
+        {
+            switch (dataValueTypeId)
+            {
+                case var t when (t == IntegerDataValueTypeId):
+                    return typeof(int);
+                case var t when (t == RealDataValueTypeId):
+                    return typeof(double);
+                case var t when (t == CharDataValueTypeId):
+                    return typeof(char);
+                case var t when (t == StringDataValueTypeId):
+                    return typeof(string);
+                case var t when (t == ComplexIntegerDataValueTypeId):
+                    return typeof(ComplexInteger);
+                case var t when (t == ComplexRealDataValueTypeId):
+                    return typeof(ComplexReal);
+                default:
+                    throw new DataValueTypeException($"Incorrect DataValueTypeId specified. IncorrectDataValueTypeId = \"{dataValueTypeId}\"");
+            }
+        }
+
+        public static bool IsValidValue(Guid dataValueTypeId, object value)
+        {
+            var currentType = GetType(dataValueTypeId);
+
+            try
+            {
+                Convert.ChangeType(value, currentType);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 
 }

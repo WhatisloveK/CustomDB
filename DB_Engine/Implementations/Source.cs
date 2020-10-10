@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace DB_Engine.Implementations.Sources
+namespace DB_Engine.Implementations
 {
     public class Source : ISource
     {

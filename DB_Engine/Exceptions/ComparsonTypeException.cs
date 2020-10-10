@@ -2,7 +2,6 @@
 {
     public class ComparsonTypeException: System.Exception
     {
-        public ComparsonTypeException(string errorMessage) : base(errorMessage){
-        }
+        public ComparsonTypeException(string errorMessage) : base(errorMessage){ }
     }
 }

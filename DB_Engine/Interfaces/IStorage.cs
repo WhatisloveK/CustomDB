@@ -15,11 +15,10 @@ namespace DB_Engine.Interfaces
         void DropColumn(Entity entity, int index);
         void Delete(Entity entity, Dictionary<string, List<IValidator>> conditions);
         void Update(Entity entity, Dictionary<string, List<IValidator>> conditions);
-        void Insert(Entity entity, List<object> row);
-        void InsertRange(Entity entity, List<List<object>> rows);
-        IEnumerable<List<object>> Select(Entity entity);
+        void Insert(Entity entity, List<List<object>> rows);
+        List<List<object>> Select(Entity entity);
         //IEnumerable<List<object>> Select(Entity entity, int top, int offset);
-        IEnumerable<List<object>> Select(Entity entity, Dictionary<string, List<IValidator>> conditions);
+        List<List<object>> Select(Entity entity, Dictionary<string, List<IValidator>> conditions);
         //IEnumerable<List<object>> Select(Entity entity, int top, int offset, Dictionary<string, List<IValidator>> conditions);
     }
 }

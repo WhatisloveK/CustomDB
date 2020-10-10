@@ -1,5 +1,5 @@
 ﻿using DB_Engine.Exceptions;
-using DB_Engine.Implementations.Factories;
+using DB_Engine.Factories;
 using DB_Engine.Interfaces;
 using DB_Engine.Models;
 using System;
@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace DB_Engine.Implementations.Storage
+namespace DB_Engine.Implementations
 {
     public class Storage : IStorage
     {
@@ -103,7 +103,7 @@ namespace DB_Engine.Implementations.Storage
             });
         }
 
-        public void InsertRange(Entity entity, List<List<object>> rows)
+        public void Insert(Entity entity, List<List<object>> rows)
         {
             if (!(entity.Sources == null || entity.Sources.Count == 0))
             {
@@ -130,9 +130,9 @@ namespace DB_Engine.Implementations.Storage
 
         }
 
-        public IEnumerable<List<object>> Select(Entity entity)
+        public List<List<object>> Select(Entity entity)
         {
-            IEnumerable<List<object>> result = new List<List<object>>();
+            List<List<object>> result = new List<List<object>>();
 
             if (entity.Sources == null || entity.Sources.Count == 0)
             {
@@ -141,16 +141,17 @@ namespace DB_Engine.Implementations.Storage
 
             foreach (var source in entity.Sources)
             {
-                result = result.Union(source.GetData());
+                
+                result = result.Union(source.GetData()).ToList();
             }
 
             return result;
         }
 
        
-        public IEnumerable<List<object>> Select(Entity entity, Dictionary<string, List<IValidator>> conditions)
+        public List<List<object>> Select(Entity entity, Dictionary<string, List<IValidator>> conditions)
         {
-            IEnumerable<List<object>> result = new List<List<object>>();
+            List<List<object>> result = new List<List<object>>();
 
             if (entity.Sources == null || entity.Sources.Count == 0)
             {
@@ -174,7 +175,7 @@ namespace DB_Engine.Implementations.Storage
                     }
                     return true;
                 });
-                result = result.Union(data);
+                result = result.Union(data).ToList();
             }
             return result;
         }
@@ -217,9 +218,6 @@ namespace DB_Engine.Implementations.Storage
             throw new NotImplementedException();
         }
 
-        public void Insert(Entity entity, List<object> row)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }

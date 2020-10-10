@@ -3,9 +3,9 @@ using DB_Engine.Types;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using DB_Engine.Implementations.Sources;
+using DB_Engine.Implementations;
 
-namespace DB_Engine.Implementations.Factories
+namespace DB_Engine.Factories
 {
     public static class SourceFactory
     {
