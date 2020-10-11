@@ -8,18 +8,20 @@ namespace DB_Engine.Interfaces
     public interface IValidator
     {
         [JsonPropertyName("value")]
-        object Value { get; }
+        object Value { get; set; }
 
-        [JsonPropertyName("operation")]
-        int Operation { get; }
+        [JsonPropertyName("comparsonType")]
+        int ComparsonType { get; set;  }
 
         [JsonPropertyName("type")]
         string Type { get; }
 
-        //[JsonPropertyName("dataValueTypeId")]
-        //Guid DataValueType { get; }
+        [JsonPropertyName("dataValueTypeId")]
+        Guid DataValueTypeId { get; }
 
         bool IsValid(object value);
+
+        void Init();
     }
 
     public enum ComparsonType

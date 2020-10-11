@@ -1,4 +1,5 @@
-﻿using DB_Engine.Interfaces;
+﻿using DB_Engine.Implementations;
+using DB_Engine.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,8 +13,7 @@ namespace DB_Engine.Models
         public string Name { get; set; }
 
         [JsonPropertyName("sources")]
-        //[JsonConverter(typeof(SourceListConverter))]
-        public List<ISource> Sources { get; set; }
+        public List<Source> Sources { get; set; }
 
         [JsonPropertyName("entitySchema")]
         public EntitySchema Schema { get; set; }
@@ -23,7 +23,7 @@ namespace DB_Engine.Models
 
         public Entity()
         {
-            Sources = new List<ISource>();
+            Sources = new List<Source>();
             Items = new List<List<object>>();
             Schema = new EntitySchema();
         }

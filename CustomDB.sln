@@ -5,6 +5,12 @@ VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DB_Engine", "DB_Engine\DB_Engine.csproj", "{AE525184-C5DD-4486-AA2F-48AC3F86D5D9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DBEngine", "DBEngine", "{936A5DC9-9F8F-4270-893A-E03C0B099E08}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Clients", "Clients", "{E4D46B07-29B2-4FC4-A75B-51E6E298384C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleClient", "ConsoleClient\ConsoleClient.csproj", "{0EBBF228-3EDD-473D-A394-31184DD11D6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +21,17 @@ Global
 		{AE525184-C5DD-4486-AA2F-48AC3F86D5D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE525184-C5DD-4486-AA2F-48AC3F86D5D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE525184-C5DD-4486-AA2F-48AC3F86D5D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EBBF228-3EDD-473D-A394-31184DD11D6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EBBF228-3EDD-473D-A394-31184DD11D6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EBBF228-3EDD-473D-A394-31184DD11D6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EBBF228-3EDD-473D-A394-31184DD11D6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AE525184-C5DD-4486-AA2F-48AC3F86D5D9} = {936A5DC9-9F8F-4270-893A-E03C0B099E08}
+		{0EBBF228-3EDD-473D-A394-31184DD11D6A} = {E4D46B07-29B2-4FC4-A75B-51E6E298384C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {508CB77A-430D-452D-8813-092AA5A27B82}

@@ -25,10 +25,10 @@ namespace DB_Engine.Implementations.Servises
 
         public DataBaseService(string name, string rootPath, long fileSize)
         {
-            var regex = new Regex($"*.{GlobalSetting.Extention}"); //valid 
+            //var regex = new Regex($"*.{GlobalSetting.Extention}"); //valid 
 
-            if (regex.IsMatch(rootPath))
-            {
+            //if (regex.IsMatch(rootPath))
+            //{
                 DataBase = new DataBase
                 {
                     Name = name,
@@ -37,11 +37,11 @@ namespace DB_Engine.Implementations.Servises
                 _storage = StorageFactory.GetStorage(DataBase);
 
                 _storage.UpdateDataBaseStructure();
-            }
-            else
-            {
-                throw new ArgumentException($"Incorrect path: {rootPath}");
-            }
+            //}
+            //else
+            //{
+            //    throw new ArgumentException($"Incorrect path: {rootPath}");
+            //}
         }
 
         public DataBaseService(string path)

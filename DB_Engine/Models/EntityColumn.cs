@@ -1,5 +1,6 @@
 ﻿using DB_Engine.Interfaces;
 using DB_Engine.Types;
+using DB_Engine.Validators;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +17,7 @@ namespace DB_Engine.Models
         public Guid DataValueType { get; set; }
 
         [JsonPropertyName("validators")]
+        [JsonConverter(typeof(ValidatorConverter))]
         public List<IValidator> Validators { get; set; }
 
         public EntityColumn()

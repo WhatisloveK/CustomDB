@@ -34,6 +34,10 @@ namespace DB_Engine.Implementations.Servises
 
         public void AddColumn(string name, Guid dataValueTypeId, List<IValidator> validators = null)
         {
+            if (Entity.Schema.Columns.Count == 0)
+            {
+                Entity.Schema.Columns.Add(new EntityColumn { Name = "Id", DataValueType = DataValueType.UniqueidentifierDataValueTypeId, Validators = null });
+            }
             if (Entity.Schema.Columns.Select(x => x.Name.ToLower()).Any(x => x == name.ToLower()))
                 throw new ArgumentException($"EntityColumn with name: {name} already exist!");
 
@@ -71,7 +75,7 @@ namespace DB_Engine.Implementations.Servises
             if (!ValidateDataTypes(row))
                 throw new DataValueTypeException("Incorrect data types! Expected: " + 
                     Entity.Schema.Columns.Select(x => DataValueType.GetType(x.DataValueType).Name).Aggregate((x, y) => $"{x}, {y}"));
-
+            row.Insert(0, Guid.NewGuid());
             _storage.Insert(Entity, new List<List<object>> { row });
         }
 

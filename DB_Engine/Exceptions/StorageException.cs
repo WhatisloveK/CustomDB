@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace DB_Engine.Exceptions
+﻿namespace DB_Engine.Exceptions
 {
     public class StorageException : System.Exception
     {
