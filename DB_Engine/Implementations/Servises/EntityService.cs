@@ -1,4 +1,5 @@
 ﻿using DB_Engine.Exceptions;
+using DB_Engine.Extentions;
 using DB_Engine.Interfaces;
 using DB_Engine.Models;
 using DB_Engine.Types;
@@ -12,7 +13,7 @@ namespace DB_Engine.Implementations.Servises
 {
     public class EntityService : IEntityService
     {
-        private Entity Entity { get;  set; }
+        public Entity Entity { get;  set; }
 
         private IStorage _storage;
 
@@ -72,19 +73,23 @@ namespace DB_Engine.Implementations.Servises
 
         public void Insert(List<object> row)
         {
+            row.Insert(0, Guid.NewGuid());
             if (!ValidateDataTypes(row))
                 throw new DataValueTypeException("Incorrect data types! Expected: " + 
                     Entity.Schema.Columns.Select(x => DataValueType.GetType(x.DataValueType).Name).Aggregate((x, y) => $"{x}, {y}"));
-            row.Insert(0, Guid.NewGuid());
             _storage.Insert(Entity, new List<List<object>> { row });
         }
 
         public void InsertRange(List<List<object>> rows)
         {
+            rows.ForEach((item) =>
+            {
+                item.Insert(0, Guid.NewGuid());
+            });
             if (!rows.All(x => ValidateDataTypes(x)))
                 throw new DataValueTypeException("Incorrect data types! Expected: " +
                     Entity.Schema.Columns.Select(x => DataValueType.GetType(x.DataValueType).Name).Aggregate((x, y) => $"{x}, {y}"));
-
+            
             _storage.Insert(Entity, rows);
         }
 
@@ -118,7 +123,47 @@ namespace DB_Engine.Implementations.Servises
 
         public void Update(Dictionary<string, List<IValidator>> conditions, List<object> row)
         {
-            throw new NotImplementedException();
+            if (!ValidateDataTypes(row))
+            {
+                 throw new DataValueTypeException("Incorrect data types! Expected: " +
+                    Entity.Schema.Columns.Select(x => DataValueType.GetType(x.DataValueType).Name).Aggregate((x, y) => $"{x}, {y}"));
+            }
+            _storage.Update(Entity, conditions, row);
+        }
+
+        public List<List<object>> InnerJoin(Entity joinableEntity, Tuple<string, string> joinableColumns)
+        {
+            var firstColumn = Entity.Schema.Columns.Find(item => item.Name == joinableColumns.Item1);
+            var secondColumn = joinableEntity.Schema.Columns.Find(item => item.Name == joinableColumns.Item2);
+            if(firstColumn.DataValueType!= secondColumn.DataValueType)
+            {
+                throw new DataValueTypeException("Column types selected for join operation doesnt match");
+            }
+            int indexOfFirstColumnEntity = Entity.Schema.Columns.IndexOf(firstColumn),
+                indexOfSecondColumnEntity = joinableEntity.Schema.Columns.IndexOf(secondColumn);
+            
+            var type = DataValueType.GetType(firstColumn.DataValueType);
+
+            var result = from first in _storage.Select(Entity).ToList()
+                         join second in _storage.Select(joinableEntity).ToList()
+                         on first[indexOfFirstColumnEntity].ToString() equals second[indexOfSecondColumnEntity].ToString()
+                         select first.Concat(second).ToList();
+            return result.ToList();
+        }
+
+        public List<List<object>> CrossJoin(Entity entity)
+        {
+            List<List<object>> result = _storage.Select(Entity);
+            var CartesianJoin = result.CrossJoin(_storage.Select(entity)).ToList();
+
+            result = CartesianJoin.Select(t =>
+            {
+                var result2 = new List<object>();
+                result2.AddRange(t.Item1);
+                result2.AddRange(t.Item2);
+                return result2;
+            }).ToList();
+            return result;
         }
     }
 }

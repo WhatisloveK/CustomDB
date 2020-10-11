@@ -25,23 +25,16 @@ namespace DB_Engine.Implementations.Servises
 
         public DataBaseService(string name, string rootPath, long fileSize)
         {
-            //var regex = new Regex($"*.{GlobalSetting.Extention}"); //valid 
+            
+            DataBase = new DataBase
+            {
+                Name = name,
+                Info = new DatabaseInfo { RootPath = rootPath, FileSize = fileSize }
+            };
+            _storage = StorageFactory.GetStorage(DataBase);
 
-            //if (regex.IsMatch(rootPath))
-            //{
-                DataBase = new DataBase
-                {
-                    Name = name,
-                    Info = new DatabaseInfo { RootPath = rootPath, FileSize = fileSize }
-                };
-                _storage = StorageFactory.GetStorage(DataBase);
-
-                _storage.UpdateDataBaseStructure();
-            //}
-            //else
-            //{
-            //    throw new ArgumentException($"Incorrect path: {rootPath}");
-            //}
+            _storage.UpdateDataBaseStructure();
+           
         }
 
         public DataBaseService(string path)

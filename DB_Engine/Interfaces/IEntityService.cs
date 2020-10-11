@@ -7,7 +7,7 @@ namespace DB_Engine.Interfaces
 {
     public interface IEntityService
     {
-        
+        Entity Entity { get; set; }
         void AddColumn(string name, Guid dataValueTypeId, List<IValidator> validators = null);
         void AddColumn(EntityColumn column);
         void DropColumn(string name);
@@ -17,9 +17,7 @@ namespace DB_Engine.Interfaces
         void Update(Dictionary<string, List<IValidator>> conditions, List<object> row);
         List<List<object>> Select();
         List<List<object>> Select(Dictionary<string, List<IValidator>> conditions);
-
-        //List<List<object>> Union(params Entity[] tables);
-
-        //List<List<object>> CrossJoin(Entity table);
+        List<List<object>> InnerJoin(Entity entity, Tuple<string, string> joinableColumns);
+        List<List<object>> CrossJoin(Entity entity);
     }
 }

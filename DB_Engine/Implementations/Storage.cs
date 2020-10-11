@@ -75,8 +75,8 @@ namespace DB_Engine.Implementations
                 {
                     foreach (var condition in conditions)
                     {
-                        var field = entity.Schema.Columns.Find(x => x.Name == condition.Key);
-                        var index = entity.Schema.Columns.IndexOf(field);
+                        var column = entity.Schema.Columns.Find(x => x.Name == condition.Key);
+                        var index = entity.Schema.Columns.IndexOf(column);
 
                         if (!PassAllValidators(condition.Value, element[index]))
                         {
@@ -213,9 +213,39 @@ namespace DB_Engine.Implementations
             UpdateDataBaseStructure();
         }
 
-        public void Update(Entity entity, Dictionary<string, List<IValidator>> conditions)
+        public void Update(Entity entity, Dictionary<string, List<IValidator>> conditions, List<object> updatedRow)
         {
-            throw new NotImplementedException();
+            if (entity.Sources == null || entity.Sources.Count == 0)
+            {
+                throw new StorageException("The entity is empty!");
+            }
+
+            Parallel.ForEach(entity.Sources, (source) =>
+            {
+                var data = source.GetData();
+                data.ForEach(row =>
+                {
+                    bool flag = true;
+                    foreach (var condition in conditions)
+                    {
+
+                        var column = entity.Schema.Columns.Find(x => x.Name == condition.Key);
+                        var index = entity.Schema.Columns.IndexOf(column);
+
+                        if (!PassAllValidators(condition.Value, row[index]))
+                        {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag)
+                    {
+                        row = updatedRow;
+                    }
+                });
+
+                source.WriteData(data);
+            });
         }
 
         
