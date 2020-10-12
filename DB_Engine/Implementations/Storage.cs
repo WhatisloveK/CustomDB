@@ -130,7 +130,7 @@ namespace DB_Engine.Implementations
 
         }
 
-        public List<List<object>> Select(Entity entity)
+        public List<List<object>> Select(Entity entity, bool showSystemColumns = false)
         {
             List<List<object>> result = new List<List<object>>();
 
@@ -144,12 +144,15 @@ namespace DB_Engine.Implementations
                 
                 result = result.Union(source.GetData()).ToList();
             }
-
+            if (!showSystemColumns)
+            {
+                result.ForEach(item=>item.RemoveAt(0));
+            }
             return result;
         }
 
        
-        public List<List<object>> Select(Entity entity, Dictionary<string, List<IValidator>> conditions)
+        public List<List<object>> Select(Entity entity, Dictionary<string, List<IValidator>> conditions, bool showSystemColumns = false)
         {
             List<List<object>> result = new List<List<object>>();
 
@@ -176,6 +179,10 @@ namespace DB_Engine.Implementations
                     return true;
                 });
                 result = result.Union(data).ToList();
+            }
+            if (!showSystemColumns)
+            {
+                result.ForEach(item => item.RemoveAt(0));
             }
             return result;
         }

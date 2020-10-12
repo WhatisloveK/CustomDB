@@ -12,7 +12,7 @@ namespace DB_Engine.Implementations.Servises
     public class DataBaseService : IDataBaseService
     {
         private IStorage _storage;
-        private DataBase DataBase { get; set; }
+        public DataBase DataBase { get; set; }
 
         public string Name => DataBase.Name;
        

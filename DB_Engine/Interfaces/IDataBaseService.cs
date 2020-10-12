@@ -7,6 +7,7 @@ namespace DB_Engine.Interfaces
 {
     public interface IDataBaseService
     {
+        public DataBase DataBase { get; set; }
         IEntityService GetEntityService(string tableName); 
         void AddTable(string tableName);
         void DeleteTable(string tableName);

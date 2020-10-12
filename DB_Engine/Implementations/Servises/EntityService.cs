@@ -93,15 +93,15 @@ namespace DB_Engine.Implementations.Servises
             _storage.Insert(Entity, rows);
         }
 
-        public List<List<object>> Select()
+        public List<List<object>> Select(bool showSystemColumns = true)
         {
-            return _storage.Select(Entity);
+            return _storage.Select(Entity, showSystemColumns);
         }
 
 
-        public List<List<object>> Select(Dictionary<string, List<IValidator>> conditions)
+        public List<List<object>> Select(Dictionary<string, List<IValidator>> conditions, bool showSystemColumns = true)
         {
-            return _storage.Select(Entity, conditions);
+            return _storage.Select(Entity, conditions,showSystemColumns);
         }
 
 
@@ -131,7 +131,7 @@ namespace DB_Engine.Implementations.Servises
             _storage.Update(Entity, conditions, row);
         }
 
-        public List<List<object>> InnerJoin(Entity joinableEntity, Tuple<string, string> joinableColumns)
+        public List<List<object>> InnerJoin(Entity joinableEntity, Tuple<string, string> joinableColumns, bool showSystemColumns = true)
         {
             var firstColumn = Entity.Schema.Columns.Find(item => item.Name == joinableColumns.Item1);
             var secondColumn = joinableEntity.Schema.Columns.Find(item => item.Name == joinableColumns.Item2);
@@ -144,17 +144,17 @@ namespace DB_Engine.Implementations.Servises
             
             var type = DataValueType.GetType(firstColumn.DataValueType);
 
-            var result = from first in _storage.Select(Entity).ToList()
-                         join second in _storage.Select(joinableEntity).ToList()
+            var result = from first in _storage.Select(Entity, showSystemColumns).ToList()
+                         join second in _storage.Select(joinableEntity, showSystemColumns).ToList()
                          on first[indexOfFirstColumnEntity].ToString() equals second[indexOfSecondColumnEntity].ToString()
                          select first.Concat(second).ToList();
             return result.ToList();
         }
 
-        public List<List<object>> CrossJoin(Entity entity)
+        public List<List<object>> CrossJoin(Entity entity, bool showSystemColumns = true)
         {
-            List<List<object>> result = _storage.Select(Entity);
-            var CartesianJoin = result.CrossJoin(_storage.Select(entity)).ToList();
+            List<List<object>> result = _storage.Select(Entity, showSystemColumns);
+            var CartesianJoin = result.CrossJoin(_storage.Select(entity,showSystemColumns)).ToList();
 
             result = CartesianJoin.Select(t =>
             {

@@ -16,7 +16,7 @@ namespace DB_Engine.Interfaces
         void Delete(Entity entity, Dictionary<string, List<IValidator>> conditions);
         void Update(Entity entity, Dictionary<string, List<IValidator>> conditions, List<object> updatedRow);
         void Insert(Entity entity, List<List<object>> rows);
-        List<List<object>> Select(Entity entity);
-        List<List<object>> Select(Entity entity, Dictionary<string, List<IValidator>> conditions);
+        List<List<object>> Select(Entity entity, bool showSystemColumns = true);
+        List<List<object>> Select(Entity entity, Dictionary<string, List<IValidator>> conditions, bool showSystemColumns = true);
     }
 }

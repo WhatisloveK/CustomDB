@@ -45,8 +45,8 @@ namespace ConsoleClient
             //     new List<object>{"name2", 124, -10}
             //};
             //table2.InsertRange(data2);
-            var resultInnerJoin = table1.InnerJoin(table2.Entity, new Tuple<string, string>("Name", "Name2"));
-            var resultIntersect = table1.CrossJoin(table2.Entity);
+            var resultInnerJoin = table1.InnerJoin(table2.Entity, new Tuple<string, string>("Name", "Name2"),false);
+            var resultIntersect = table1.CrossJoin(table2.Entity,false);
 
             ConsoleOut(table1.Select());
             ConsoleOut(table2.Select());

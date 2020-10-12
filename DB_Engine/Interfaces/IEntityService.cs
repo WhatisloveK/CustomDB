@@ -15,9 +15,9 @@ namespace DB_Engine.Interfaces
         void InsertRange(List<List<object>> rows);
         void Delete(Dictionary<string, List<IValidator>> conditions);
         void Update(Dictionary<string, List<IValidator>> conditions, List<object> row);
-        List<List<object>> Select();
-        List<List<object>> Select(Dictionary<string, List<IValidator>> conditions);
-        List<List<object>> InnerJoin(Entity entity, Tuple<string, string> joinableColumns);
-        List<List<object>> CrossJoin(Entity entity);
+        List<List<object>> Select(bool showSystemColumns = true);
+        List<List<object>> Select(Dictionary<string, List<IValidator>> conditions, bool showSystemColumns = true);
+        List<List<object>> InnerJoin(Entity entity, Tuple<string, string> joinableColumns, bool showSystemColumns = true);
+        List<List<object>> CrossJoin(Entity entity, bool showSystemColumns = true);
     }
 }
