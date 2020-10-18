@@ -18,8 +18,10 @@ namespace DB_EngineTest
     {
         private IStorage _storage;
         private IDataBaseService dataBaseService;
-        
-        private void Initialize()
+
+
+        [SetUp]
+        public void Initialize()
         {
             string name = "EntityServiceTest";
             long fileSize = 1000000;
@@ -68,13 +70,6 @@ namespace DB_EngineTest
             _storage = StorageFactory.GetStorage(dataBaseService.DataBase);
         }
 
-        public EntityServiceTest()
-        {
-            Initialize();
-        }
-
-
-        
 
         [Test]
         public void InnerJoinTest()
@@ -141,6 +136,71 @@ namespace DB_EngineTest
         }
 
         [Test]
+        public void SelectTest()
+        {
+            //Arrange
+            Entity entity = _storage.DataBase.Entities.Find(x => x.Name == "Table2");
+            EntityService entityService = new EntityService(entity, _storage);
+            List<List<object>> expectedList = new List<List<object>>
+            {
+                 new List<object>{"name1", 10, 3 },
+                 new List<object>{"name3", -12, 2},
+                 new List<object>{"name2", 124, -10}
+            };
+            var json = JsonSerializer.Serialize(expectedList);
+            var expected = JsonSerializer.Deserialize<List<List<object>>>(json);
+
+
+            //Act
+            var actual = entityService.Select(false);
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                for (int i = 0; i < actual.Count; i++)
+                {
+                    for (int j = 0; j < actual[i].Count; j++)
+                    {
+                        Assert.AreEqual(expected[i][j].ToString(), actual[i][j].ToString());
+                    }
+                }
+            });
+        }
+
+        [Test]
+        public void SelectWithConditionsTest()
+        {
+            //Arrange
+            Entity entity = _storage.DataBase.Entities.Find(x => x.Name == "Table2");
+            EntityService entityService = new EntityService(entity, _storage);
+            List<List<object>> expectedList = new List<List<object>>
+            {
+                 //new List<object>{"name1", 10, 3 },
+                 //new List<object>{"name3", -12, 2},
+                 new List<object>{"name2", 124, -10}
+            };
+            var json = JsonSerializer.Serialize(expectedList);
+            var expected = JsonSerializer.Deserialize<List<List<object>>>(json);
+
+
+            //Act
+            var actual = entityService.Select(new Dictionary<string, List<IValidator>> { ["Name2"] = new List<IValidator> { new Validator<string>(ComparsonType.EndsWith, "e2")}}, false);
+
+            
+            //Assert
+            Assert.Multiple(() =>
+            {
+                for (int i = 0; i < actual.Count; i++)
+                {
+                    for (int j = 0; j < actual[i].Count; j++)
+                    {
+                        Assert.AreEqual(expected[i][j].ToString(), actual[i][j].ToString());
+                    }
+                }
+            });
+        }
+
+        [Test]
         public void CrosJoinTest()
         {
             //Arrange
@@ -162,6 +222,78 @@ namespace DB_EngineTest
 
             //Act
             var actual = entityService.CrossJoin(entity2, false);
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                for (int i = 0; i < actual.Count; i++)
+                {
+                    for (int j = 0; j < actual[i].Count; j++)
+                    {
+                        Assert.AreEqual(expected[i][j].ToString(), actual[i][j].ToString());
+                    }
+                }
+            });
+        }
+
+        [Test]
+        public void UpdateTest()
+        {
+
+            //Arrange
+            Entity entity = _storage.DataBase.Entities.Find(x => x.Name == "Table2");
+            EntityService entityService = new EntityService(entity, _storage);
+            var fisrtFromSelect = entityService.Select().First();
+            
+            
+            var expectedList = new List<List<object>>() {
+                new List<object> { new Guid(fisrtFromSelect[0].ToString()), "UpdatedName", 228, 228 }
+            };
+            fisrtFromSelect = expectedList[0];
+            var json = JsonSerializer.Serialize(expectedList);
+            var expected = JsonSerializer.Deserialize<List<List<object>>>(json);
+
+
+            //Act
+            entityService.Update(new Dictionary<string, List<IValidator>> { ["Id"] = new List<IValidator> { new Validator<Guid>(ComparsonType.Equal, (Guid)fisrtFromSelect[0]) } }, fisrtFromSelect);
+            var actual = entityService.Select(new Dictionary<string, List<IValidator>> { ["Id"] = new List<IValidator> { new Validator<Guid>(ComparsonType.Equal, (Guid)fisrtFromSelect[0]) } });
+
+
+            //Assert
+            Assert.Multiple(() =>
+            {
+                for (int i = 0; i < actual.Count; i++)
+                {
+                    for (int j = 0; j < actual[i].Count; j++)
+                    {
+                        Assert.AreEqual(expected[i][j].ToString(), actual[i][j].ToString());
+                    }
+                }
+            });
+        }
+
+        [Test]
+        public void BulkUpdateTest()
+        {
+
+            //Arrange
+            Entity entity = _storage.DataBase.Entities.Find(x => x.Name == "Table2");
+            EntityService entityService = new EntityService(entity, _storage);
+            var fisrtFromSelect = entityService.Select();
+            var updatedRows = new List<List<object>>() {
+                new List<object> { new Guid(fisrtFromSelect[0][0].ToString()), "UpdatedName", 228, 228 },
+                new List<object> { new Guid(fisrtFromSelect[1][0].ToString()), "SecondUpdatedName", 1488, 1488 },
+                new List<object> { new Guid(fisrtFromSelect[2][0].ToString()), "ThirdUpdateNAme",4444,4444 }
+            };
+            var expectedList = updatedRows;
+            var json = JsonSerializer.Serialize(expectedList);
+            var expected = JsonSerializer.Deserialize<List<List<object>>>(json);
+
+
+            //Act
+            entityService.Update(updatedRows);
+            var actual = entityService.Select();
+
 
             //Assert
             Assert.Multiple(() =>

@@ -121,6 +121,17 @@ namespace DB_Engine.Implementations.Servises
             return false;
         }
 
+        public void Update(List<List<object>> rows)
+        {
+            for (int i = 0; i < rows.Count; i++)
+            {
+                if (!ValidateDataTypes(rows[i].ToList()))
+                    throw new ArgumentException("Incorrect data types! Expected: " +
+                    Entity.Schema.Columns.Select(x => DataValueType.GetType(x.DataValueType).Name).Aggregate((x, y) => $"{x}, {y}"));
+            }
+            _storage.Update(Entity, rows);
+        }
+
         public void Update(Dictionary<string, List<IValidator>> conditions, List<object> row)
         {
             if (!ValidateDataTypes(row))

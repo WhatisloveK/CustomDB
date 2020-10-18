@@ -3,6 +3,7 @@ using DB_Engine.Types;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 
 namespace DB_Engine.Validators
 {
@@ -41,7 +42,6 @@ namespace DB_Engine.Validators
         {
             _comparsonValue = value;
             Value = value;
-            Init();
         }
         public override void Init()
         {
@@ -60,6 +60,15 @@ namespace DB_Engine.Validators
 
         public override bool IsValid(object actualValue)
         {
+            if (actualValue.GetType() == typeof(JsonElement))
+            {
+                actualValue = ((JsonElement)actualValue).GetString();
+            }
+            if(typeof(T) == typeof(Guid))
+            {
+                actualValue = new Guid((string)actualValue);
+            }
+
             return _comparsonFunc[_comparsonType]((T)actualValue);
         }
     }

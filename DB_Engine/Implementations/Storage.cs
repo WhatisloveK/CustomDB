@@ -164,7 +164,7 @@ namespace DB_Engine.Implementations
             foreach (var source in entity.Sources)
             {
                 var data = source.GetData();
-                data.Where(element =>
+                data = data.Where(element =>
                 {
                     foreach (var condition in conditions)
                     {
@@ -177,7 +177,7 @@ namespace DB_Engine.Implementations
                         }
                     }
                     return true;
-                });
+                }).ToList();
                 result = result.Union(data).ToList();
             }
             if (!showSystemColumns)
@@ -226,35 +226,58 @@ namespace DB_Engine.Implementations
             {
                 throw new StorageException("The entity is empty!");
             }
-
             Parallel.ForEach(entity.Sources, (source) =>
             {
                 var data = source.GetData();
-                data.ForEach(row =>
+                var selectedForUpdate = data.Where(element =>
                 {
-                    bool flag = true;
                     foreach (var condition in conditions)
                     {
+                        var field = entity.Schema.Columns.Find(x => x.Name == condition.Key);
+                        var index = entity.Schema.Columns.IndexOf(field);
 
-                        var column = entity.Schema.Columns.Find(x => x.Name == condition.Key);
-                        var index = entity.Schema.Columns.IndexOf(column);
-
-                        if (!PassAllValidators(condition.Value, row[index]))
+                        if (!PassAllValidators(condition.Value, element[index]))
                         {
-                            flag = false;
-                            break;
+                            return false;
                         }
                     }
-                    if (flag)
-                    {
-                        row = updatedRow;
-                    }
+                    return true;
                 });
+                var updatedData = data.Except(selectedForUpdate).ToList();
+                selectedForUpdate = selectedForUpdate.Select(item =>
+                {
+                    for (int i = 1; i < item.Count; i++)
+                    {
+                        item[i] = updatedRow[i];
+                    }
+                    return item;
+                });
+                updatedData.AddRange(selectedForUpdate);
+
 
                 source.WriteData(data);
             });
         }
 
-        
+        public void Update(Entity entity, List<List<object>> rows)
+        {
+            if (entity.Sources == null || entity.Sources.Count == 0)
+            {
+                throw new StorageException("The entity is empty!");
+            }
+
+            Parallel.ForEach(entity.Sources, (source) =>
+            {
+                var data = source.GetData();
+                var ids = rows.Select(x => (Guid)x[0]);
+
+                data.RemoveAll(element => ids.Contains(Guid.Parse(element[0].ToString())));
+                data.AddRange(rows);
+
+                source.WriteData(data);
+            });
+        }
+
+
     }
 }

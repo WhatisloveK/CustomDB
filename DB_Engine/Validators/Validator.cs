@@ -16,6 +16,11 @@ namespace DB_Engine.Validators
             Init();
         }
 
+        private string CastToString(T item)
+        {
+            return (string)Convert.ChangeType(item, typeof(string));
+        }
+
         public override void Init()
         {
             base.Init();
@@ -30,14 +35,14 @@ namespace DB_Engine.Validators
 
                 _comparsonFunc.AddRange(new Dictionary<ComparsonType, Func<T, bool>>
                 {
-                    [Interfaces.ComparsonType.Contains] = new Func<T, bool>(x => Convert.ToString(x).Contains(Convert.ToString(_comparsonValue))),
-                    [Interfaces.ComparsonType.NotContains] = new Func<T, bool>(x => !Convert.ToString(x).Contains(Convert.ToString(_comparsonValue))),
-                    [Interfaces.ComparsonType.IsNull] = new Func<T, bool>(x => string.IsNullOrEmpty(Convert.ToString(x))),
-                    [Interfaces.ComparsonType.IsNotNull] = new Func<T, bool>(x => string.IsNullOrEmpty(Convert.ToString(x))),
-                    [Interfaces.ComparsonType.StartsWith] = new Func<T, bool>(x => Convert.ToString(x).StartsWith(Convert.ToString(_comparsonValue))),
-                    [Interfaces.ComparsonType.NotStarstWith] = new Func<T, bool>(x => !Convert.ToString(x).StartsWith(Convert.ToString(_comparsonValue))),
-                    [Interfaces.ComparsonType.EndsWith] = new Func<T, bool>(x => Convert.ToString(x).EndsWith(Convert.ToString(_comparsonValue))),
-                    [Interfaces.ComparsonType.NotEndsWith] = new Func<T, bool>(x => !Convert.ToString(x).EndsWith(Convert.ToString(_comparsonValue)))
+                    [Interfaces.ComparsonType.Contains] = new Func<T, bool>(x => CastToString(x).Contains(CastToString(_comparsonValue))),
+                    [Interfaces.ComparsonType.NotContains] = new Func<T, bool>(x => !CastToString(x).Contains(CastToString(_comparsonValue))),
+                    [Interfaces.ComparsonType.IsNull] = new Func<T, bool>(x => string.IsNullOrEmpty(CastToString(x))),
+                    [Interfaces.ComparsonType.IsNotNull] = new Func<T, bool>(x => !string.IsNullOrEmpty(CastToString(x))),
+                    [Interfaces.ComparsonType.StartsWith] = new Func<T, bool>(x => CastToString(x).StartsWith(CastToString(_comparsonValue))),
+                    [Interfaces.ComparsonType.NotStarstWith] = new Func<T, bool>(x => !CastToString(x).StartsWith(CastToString(_comparsonValue))),
+                    [Interfaces.ComparsonType.EndsWith] = new Func<T, bool>(x => CastToString(x).EndsWith(CastToString(_comparsonValue))),
+                    [Interfaces.ComparsonType.NotEndsWith] = new Func<T, bool>(x => !CastToString(x).EndsWith(CastToString(_comparsonValue)))
                 });
             }
             if (!_comparsonFunc.TryGetValue(_comparsonType, out _))
