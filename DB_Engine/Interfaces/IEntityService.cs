@@ -7,6 +7,7 @@ namespace DB_Engine.Interfaces
 {
     public interface IEntityService
     {
+        void UpdateSchemaStructure();
         Entity Entity { get; set; }
         void AddColumn(string name, Guid dataValueTypeId, List<IValidator> validators = null);
         void AddColumn(EntityColumn column);

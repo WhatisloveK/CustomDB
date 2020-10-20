@@ -176,5 +176,10 @@ namespace DB_Engine.Implementations.Servises
             }).ToList();
             return result;
         }
+
+        public void UpdateSchemaStructure()
+        {
+            _storage.UpdateDataBaseStructure();
+        }
     }
 }

@@ -67,6 +67,7 @@ namespace DB_Engine.Types
             }
         }
 
+
         public static bool IsValidValue(Guid dataValueTypeId, object value)
         {
             var currentType = GetType(dataValueTypeId);
