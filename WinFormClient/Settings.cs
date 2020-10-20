@@ -6,11 +6,11 @@ namespace WinFormClient
 {
     class Settings
     {
-        public int LeftSideButtonWidth { get; set; } = 200;
-        public int DataBaseButtonHeight { get; set; } = 50;
-        public int TableSchemaButtonHeight { get; set; } = 30;
-        public int TableSchemaButtonWidth { get; set; } = 30;
-        public int SubButtonHeght { get; set; } = 30;
-        public int TopMenuButtonWidth = 100;
+        public static int LeftSideButtonWidth  = 200;
+        public static int DataBaseButtonHeight  = 50;
+        public static int TableSchemaButtonHeight  = 30;
+        public static int TableSchemaButtonWidth = 30;
+        public static int SubButtonHeght  = 30;
+        public static int TopMenuButtonWidth = 100;
     }
 }

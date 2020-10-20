@@ -28,25 +28,26 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.dataGridView = new System.Windows.Forms.DataGridView();
             this.structureTreeView = new System.Windows.Forms.TreeView();
             this.menuStripTop = new System.Windows.Forms.MenuStrip();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.flowLayoutPanelTopMenu = new System.Windows.Forms.FlowLayoutPanel();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).BeginInit();
             this.SuspendLayout();
             // 
-            // dataGridView1
+            // dataGridView
             // 
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(256, 60);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.Size = new System.Drawing.Size(1088, 549);
-            this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.Text = "dataGridView1";
+            this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView.Location = new System.Drawing.Point(256, 60);
+            this.dataGridView.Name = "dataGridView";
+            this.dataGridView.Size = new System.Drawing.Size(1088, 549);
+            this.dataGridView.TabIndex = 0;
+            this.dataGridView.Text = "dataGridView1";
             // 
             // structureTreeView
             // 
+            this.structureTreeView.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.structureTreeView.Location = new System.Drawing.Point(12, 60);
             this.structureTreeView.Name = "structureTreeView";
             this.structureTreeView.Size = new System.Drawing.Size(238, 549);
@@ -75,12 +76,12 @@
             this.ClientSize = new System.Drawing.Size(1356, 621);
             this.Controls.Add(this.flowLayoutPanelTopMenu);
             this.Controls.Add(this.structureTreeView);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.dataGridView);
             this.Controls.Add(this.menuStripTop);
             this.MainMenuStrip = this.menuStripTop;
             this.Name = "Main";
             this.Text = "Database managment system";
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -88,7 +89,7 @@
 
         #endregion
 
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView dataGridView;
         private System.Windows.Forms.TreeView structureTreeView;
         private System.Windows.Forms.MenuStrip menuStripTop;
         private System.Windows.Forms.OpenFileDialog openFileDialog;

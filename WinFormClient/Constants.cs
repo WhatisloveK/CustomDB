@@ -16,6 +16,12 @@ namespace WinFormClient
             ["Complex Real"] = DataValueType.ComplexRealDataValueTypeId,
             ["Real"] = DataValueType.RealDataValueTypeId
         };
+
+        public static class SelectedNode
+        {
+            public const string DB = "DataBase";
+            public const string Table = "Table";
+        }
         public static class MainForm
         {
             public const string File = "File";
