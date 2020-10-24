@@ -48,9 +48,9 @@
             // structureTreeView
             // 
             this.structureTreeView.Font = new System.Drawing.Font("Yu Gothic UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.structureTreeView.Location = new System.Drawing.Point(12, 60);
+            this.structureTreeView.Location = new System.Drawing.Point(12, 27);
             this.structureTreeView.Name = "structureTreeView";
-            this.structureTreeView.Size = new System.Drawing.Size(238, 549);
+            this.structureTreeView.Size = new System.Drawing.Size(238, 582);
             this.structureTreeView.TabIndex = 1;
             this.structureTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.structureTreeView_NodeMouseClick);
             // 
@@ -64,9 +64,9 @@
             // 
             // flowLayoutPanelTopMenu
             // 
-            this.flowLayoutPanelTopMenu.Location = new System.Drawing.Point(12, 27);
+            this.flowLayoutPanelTopMenu.Location = new System.Drawing.Point(256, 27);
             this.flowLayoutPanelTopMenu.Name = "flowLayoutPanelTopMenu";
-            this.flowLayoutPanelTopMenu.Size = new System.Drawing.Size(1332, 27);
+            this.flowLayoutPanelTopMenu.Size = new System.Drawing.Size(1088, 27);
             this.flowLayoutPanelTopMenu.TabIndex = 3;
             // 
             // Main

@@ -33,7 +33,7 @@ namespace WinFormClient.Forms
 
             InsertHeader();
 
-            foreach (var column in _tableService.Entity.Schema.Columns)
+            foreach (var column in _tableService.Entity.Schema.Columns.Skip(1).ToList())
             {
                 AddExistingFieldRedactor(column);
             }

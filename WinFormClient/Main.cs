@@ -1,5 +1,6 @@
 ﻿using DB_Engine.Interfaces;
 using DB_Engine.Models;
+using DB_Engine.Types;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,33 +17,94 @@ namespace WinFormClient
     public partial class Main : Form
     {
         private DbManager _formManager;
+
         public Main()
         {
             InitializeComponent();
             InitMenu();
             CommonControls.FlowLayoutPanelTopMenu = flowLayoutPanelTopMenu;
             CommonControls.StructureTreeView = structureTreeView;
+            dataGridView.AllowUserToAddRows = false;
             _formManager = new DbManager();
+
+            var contextMenu = ControlsHelper.GetContextMenuStrip(DataGridMenuList);
+
+            dataGridView.ContextMenuStrip = contextMenu;
         }
 
         private List<(string name, Action<object, EventArgs> action)> MenuItemList(bool isDbMenuList) => isDbMenuList ?
-            new List<(string name, Action<object, EventArgs> action)>()
-               {
+                new List<(string name, Action<object, EventArgs> action)>()
+                {
                     (Constants.DbPanelControl.AddNewTable, new Action<object, EventArgs>((o, f) =>
                         {
                             AddTable();
                         })
                     )
-               } 
-            :
-            new List<(string name, Action<object, EventArgs> action)>()
-            {
-                (Constants.TableButtonControl.EditSchema, new Action<object, EventArgs>((o, f) =>
+                } :
+                new List<(string name, Action<object, EventArgs> action)>()
+                {
+                    (Constants.TableButtonControl.EditSchema, new Action<object, EventArgs>((o, f) =>
+                        {
+                            EditTableShema();
+                        })
+                    )
+                };
+
+        private List<(string name, Action<object, EventArgs> action)> DataGridMenuList =>
+           new List<(string name, Action<object, EventArgs> action)>
+           {
+                (Constants.MainForm.DeleteSelectedRows, new Action<object, EventArgs>((o, f) =>
                     {
-                        EditTableShema();
-                    })
-                )
-            };
+                        DeleteSelectedRows();
+                    })),
+                (Constants.MainForm.UpdateRow, new Action<object, EventArgs>((o, f) =>
+                    {
+                        UpdateSelectedRows();
+                    })),
+           };
+
+        private void UpdateSelectedRows()
+        {
+            var values = new List<List<object>>();
+            var entityService = (IEntityService)structureTreeView.SelectedNode.Tag;
+            for (int i = 0; i < dataGridView.SelectedRows.Count; i++)
+            {
+                var row = new List<object>();
+                row.Add(Guid.Parse(dataGridView.SelectedRows[i].Cells[0].Value.ToString()));
+
+                for (var j = 1; j < dataGridView.Columns.Count; j++)
+                {
+                    
+                    string value = dataGridView.SelectedRows[i].Cells[j].Value?.ToString();
+                    try
+                    {
+                        row.Add(DataValueType.GetTypedValue(entityService.Entity.Schema.Columns[j - 1].DataValueType, value));
+                    }
+                    catch
+                    {
+                        MessageBox.Show(string.Format(Constants.TableButtonControl.InsertIncorrectData, i + 1, j, value));
+                        return;
+                    }
+                    
+                }
+                values.Add(row);
+            }
+
+            entityService.Update(values);
+            MessageBox.Show(Constants.TableButtonControl.UpdatedSuccess);
+        }
+
+        private void DeleteSelectedRows()
+        {
+            var ids = dataGridView.SelectedRows.Cast<DataGridViewRow>().Select(x => Guid.Parse(x.Cells[0].Value.ToString()));
+
+            foreach (DataGridViewRow row in dataGridView.SelectedRows)
+            {
+                dataGridView.Rows.Remove(row);
+            }
+            var entityService = (IEntityService)structureTreeView.SelectedNode.Tag;
+            entityService.DeleteRange(ids.ToList());
+        }
 
         private void EditTableShema()
         {
@@ -136,11 +198,12 @@ namespace WinFormClient
             {
                 if(e.Node.Parent == null)
                 {
-                    ContextMenuStrip = ControlsHelper.GetContextMenuStrip(MenuItemList(true));
+
+                    structureTreeView.ContextMenuStrip = ControlsHelper.GetContextMenuStrip(MenuItemList(true));
                 }
                 else
                 {
-                    ContextMenuStrip = ControlsHelper.GetContextMenuStrip(MenuItemList(false));
+                    structureTreeView.ContextMenuStrip = ControlsHelper.GetContextMenuStrip(MenuItemList(false));
                 }
             }
             if (e.Button == MouseButtons.Left)
@@ -155,15 +218,15 @@ namespace WinFormClient
         {
             AddTopMenuButtons();
 
-            FillColumnHeaders(entityService.Entity.Schema.Columns.Select(x => x.Name).ToList());
+            FillColumnHeaders(entityService.Entity.Schema.Columns.Skip(1).Select(x => x.Name).ToList());
             FillDataGrid(entityService.Select(), entityService.Entity.Schema.Columns);
         }
 
-        private void FillDataGrid(List<List<object>> rows, List<EntityColumn> columns)
+        private void FillDataGrid(List<List<object>> rows, List<EntityColumn> columns, bool afterJoin = false)
         {
             dataGridView.Rows.Clear();
 
-            var fieldCount = columns.Count() + 1;
+            var fieldCount = columns.Count();
             var rowsCount = rows.Count();
             if (rowsCount < 1)
             {
@@ -172,6 +235,7 @@ namespace WinFormClient
             else
             {
                 dataGridView.RowCount = rowsCount;
+                dataGridView.ColumnCount = rows[0].Count;
                 int rowCount = 0;
 
                 foreach (var row in rows)
@@ -182,20 +246,29 @@ namespace WinFormClient
                     }
                     rowCount++;
                 }
-                dataGridView.Columns[0].Visible = false;
+                if(!afterJoin)
+                    dataGridView.Columns[0].Visible = false;
+                else
+                    dataGridView.Columns[0].Visible = true;
             }
         }
 
-        private void FillColumnHeaders(List<string> headers)
+        private void FillColumnHeaders(List<string> headers, bool afterJoin = false)
         {
             var columnCount = headers.Count();
             dataGridView.ColumnCount = headers.Count + 1;
 
             for (int i = 0; i < columnCount; i++)
             {
-                dataGridView.Columns[i + 1].Name = headers[i];
+                if(!afterJoin)
+                    dataGridView.Columns[i + 1].Name = headers[i];
+                else
+                    dataGridView.Columns[i].Name = headers[i];
             }
-            dataGridView.Columns[0].Visible = false;
+            if(!afterJoin)
+                dataGridView.Columns[0].Visible = false;
+            else
+                dataGridView.Columns[0].Visible = true;
         }
 
         private void AddTopMenuButtons()
@@ -207,14 +280,6 @@ namespace WinFormClient
 
             var size = new Size(Settings.TopMenuButtonWidth, Settings.SubButtonHeght);
 
-            var buttonConditions = new Button
-            {
-                Text = Constants.TableButtonControl.AddConditions,
-                Size = size,
-                Name = nameof(Constants.SelectedNode.Table)
-            };
-            buttonConditions.Click += ButtonConditions_Click;
-
             var buttonInsert = new Button
             {
                 Text = Constants.TableButtonControl.InsertData,
@@ -223,98 +288,61 @@ namespace WinFormClient
             };
             buttonInsert.Click += ButtonInsert_Click;
 
-            var buttonDelete = new Button
+            var buttonInnerJoin = new Button
             {
-                Text = Constants.TableButtonControl.DeleteData,
+                Text = Constants.TableButtonControl.InnerJoin,
                 Size = size,
                 Name = Constants.SelectedNode.Table
             };
-            buttonDelete.Click += ButtonDelete_Click;
-
-            var buttonUnion = new Button
-            {
-                Text = Constants.TableButtonControl.UnionTables,
-                Size = size,
-                Name = Constants.SelectedNode.Table
-            };
-            buttonUnion.Click += ButtonUnion_Click; ;
+            buttonInnerJoin.Click += ButtonInnerJoin_Click; ;
 
             CommonControls.FlowLayoutPanelTopMenu.Controls.AddRange(new Control[]
             {
-                buttonConditions,
                 buttonInsert,
-                buttonDelete,
-                buttonUnion
+                buttonInnerJoin
             });
         }
 
 
-        private void ButtonUnion_Click(object sender, EventArgs e)
+        private void ButtonInnerJoin_Click(object sender, EventArgs e)
         {
-            //var form = new UnionTablesForm(_dataBaseService, _tableService);
-            //form.ShowDialog();
-            //if (form.IsSet)
-            //{
-            //    List<string> headers = new List<string>();
-            //    for (int i = 0; i < _tableService.Table.Schema.Fields.Count; i++)
-            //    {
-            //        headers.Add($"Column {i + 1}({_tableService.Table.Schema.Fields[i].Type.GetName()})");
-            //    }
+            var databaseService = (IDataBaseService)structureTreeView.SelectedNode.Parent.Tag;
+            var entityService = (IEntityService)structureTreeView.SelectedNode.Tag;
+            var form = new InnerJoinForm(databaseService, entityService);
+            form.ShowDialog();
+            if (form.IsSet)
+            {
+                List<string> headers = new List<string>();
+                for (int i = 1; i < entityService.Entity.Schema.Columns.Count; i++)
+                {
+                    headers.Add($"{entityService.Entity.Schema.Columns[i].Name}");
+                }
 
-            //    FillColumnHeaders(headers);
-            //    FillDataGrid(form.Data);
-            //}
+                for (int i = 1; i < form.SelectedTable.Schema.Columns.Count; i++)
+                {
+                    headers.Add($"{form.SelectedTable.Schema.Columns[i].Name}");
+                }
+                FillColumnHeaders(headers, true);
+                var columns = new List<EntityColumn>();
+                columns.AddRange(entityService.Entity.Schema.Columns.Skip(1).ToList());
+                columns.AddRange(form.SelectedTable.Schema.Columns.Skip(1).ToList());
+                FillDataGrid(form.Data, columns, true);
+            }
         }
 
-        private void ButtonConditions_Click(object sender, EventArgs e)
-        {
-            //var form = new SelectConditionsForm(_tableService.Table.Schema.Fields, false);
-            //form.ShowDialog();
-
-            //if (form.IsSet)
-            //{
-            //    FillColumnHeaders(_tableService.Table.Schema.Fields.Select(x => x.Name).ToList());
-
-            //    if (form.SelectConditions.Validators.Any())
-            //    {
-            //        FillDataGrid(_tableService.Select(form.SelectConditions.Top,
-            //            form.SelectConditions.Offset, form.SelectConditions.Validators));
-            //    }
-            //    else
-            //    {
-            //        FillDataGrid(_tableService.Select(form.SelectConditions.Top,
-            //            form.SelectConditions.Offset));
-            //    }
-            //}
-        }
-
-        private void ButtonDelete_Click(object sender, EventArgs e)
-        {
-            //var form = new SelectConditionsForm(_tableService.Table.Schema.Fields, true);
-            //form.ShowDialog();
-
-            //if (form.IsSet)
-            //{
-            //    if (form.SelectConditions.Validators.Any())
-            //    {
-            //        _tableService.DeleteRows(form.SelectConditions.Validators);
-
-            //        FillDataGrid(_tableService.Select(100, 0));
-            //    }
-            //}
-        }
 
         private void ButtonInsert_Click(object sender, EventArgs e)
         {
-            //var form = new InsertForm(_tableService.Table.Schema.Fields);
-            //form.ShowDialog();
+            var entityService = (IEntityService)structureTreeView.SelectedNode.Tag;
+            var form = new InsertForm(entityService.Entity.Schema.Columns);
+            form.ShowDialog();
 
-            //if (form.IsSet)
-            //{
-            //    _tableService.InsertDataRange(form.Values);
+            if (form.IsSet)
+            {
+                entityService.InsertRange(form.Values);
 
-            //    FillDataGrid(_tableService.Select(100, 0));
-            //}
+                FillDataGrid(entityService.Select(), entityService.Entity.Schema.Columns);
+            }
         }
     }
 }

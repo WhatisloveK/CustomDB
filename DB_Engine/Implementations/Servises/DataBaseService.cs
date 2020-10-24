@@ -68,6 +68,12 @@ namespace DB_Engine.Implementations.Servises
             _storage.UpdateDataBaseStructure();
         }
 
-
+        public IEnumerable<IEntityService> GetTables()
+        {
+            foreach (var table in DataBase.Entities)
+            {
+                yield return new EntityService(table, _storage);
+            }
+        }
     }
 }

@@ -14,6 +14,7 @@ namespace DB_Engine.Interfaces
         void AddColoumn(Entity entity);
         void DropColumn(Entity entity, int index);
         void Delete(Entity entity, Dictionary<string, List<IValidator>> conditions);
+        void DeleteRange(Entity entity, List<Guid> guids);
         void Update(Entity entity, List<List<object>> rows);
         void Update(Entity entity, Dictionary<string, List<IValidator>> conditions, List<object> updatedRow);
         void Insert(Entity entity, List<List<object>> rows);
