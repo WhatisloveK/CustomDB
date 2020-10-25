@@ -11,5 +11,6 @@ namespace DB_Engine.Interfaces
         IEntityService GetEntityService(string tableName); 
         void AddTable(string tableName);
         void DeleteTable(string tableName);
+        IEnumerable<IEntityService> GetTables();
     }
 }

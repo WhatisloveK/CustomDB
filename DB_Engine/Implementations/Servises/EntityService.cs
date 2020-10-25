@@ -6,6 +6,7 @@ using DB_Engine.Types;
 using DB_Engine.Validators;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 
@@ -50,6 +51,10 @@ namespace DB_Engine.Implementations.Servises
 
         public void AddColumn(EntityColumn field)
         {
+            if (Entity.Schema.Columns.Count == 0)
+            {
+                Entity.Schema.Columns.Add(new EntityColumn { Name = "Id", DataValueType = DataValueType.UniqueidentifierDataValueTypeId, Validators = null });
+            }
             Entity.Schema.Columns.Add(field);
             _storage.UpdateDataBaseStructure();
 
@@ -73,7 +78,6 @@ namespace DB_Engine.Implementations.Servises
 
         public void Insert(List<object> row)
         {
-            row.Insert(0, Guid.NewGuid());
             if (!ValidateDataTypes(row))
                 throw new DataValueTypeException("Incorrect data types! Expected: " + 
                     Entity.Schema.Columns.Select(x => DataValueType.GetType(x.DataValueType).Name).Aggregate((x, y) => $"{x}, {y}"));
@@ -82,10 +86,7 @@ namespace DB_Engine.Implementations.Servises
 
         public void InsertRange(List<List<object>> rows)
         {
-            rows.ForEach((item) =>
-            {
-                item.Insert(0, Guid.NewGuid());
-            });
+            
             if (!rows.All(x => ValidateDataTypes(x)))
                 throw new DataValueTypeException("Incorrect data types! Expected: " +
                     Entity.Schema.Columns.Select(x => DataValueType.GetType(x.DataValueType).Name).Aggregate((x, y) => $"{x}, {y}"));
@@ -109,11 +110,11 @@ namespace DB_Engine.Implementations.Servises
         {
             var columns = Entity.Schema.Columns;
             
-            if(columns.Count == row.Count)
+            if(columns.Count-1 == row.Count)
             {
-                for(int i = 0; i < columns.Count; i++)
+                for(int i = 0; i < columns.Count - 1; i++)
                 {
-                    if (!DataValueType.IsValidValue(columns[i].DataValueType, row[i]))
+                    if (!DataValueType.IsValidValue(columns[i+1].DataValueType, row[i]))
                         return false;
                 }
                 return true;
@@ -125,7 +126,7 @@ namespace DB_Engine.Implementations.Servises
         {
             for (int i = 0; i < rows.Count; i++)
             {
-                if (!ValidateDataTypes(rows[i].ToList()))
+                if (!ValidateDataTypes(rows[i].Skip(1).ToList()))
                     throw new ArgumentException("Incorrect data types! Expected: " +
                     Entity.Schema.Columns.Select(x => DataValueType.GetType(x.DataValueType).Name).Aggregate((x, y) => $"{x}, {y}"));
             }
@@ -134,7 +135,7 @@ namespace DB_Engine.Implementations.Servises
 
         public void Update(Dictionary<string, List<IValidator>> conditions, List<object> row)
         {
-            if (!ValidateDataTypes(row))
+            if (!ValidateDataTypes(row.Skip(1).ToList()))
             {
                  throw new DataValueTypeException("Incorrect data types! Expected: " +
                     Entity.Schema.Columns.Select(x => DataValueType.GetType(x.DataValueType).Name).Aggregate((x, y) => $"{x}, {y}"));
@@ -148,17 +149,32 @@ namespace DB_Engine.Implementations.Servises
             var secondColumn = joinableEntity.Schema.Columns.Find(item => item.Name == joinableColumns.Item2);
             if(firstColumn.DataValueType!= secondColumn.DataValueType)
             {
-                throw new DataValueTypeException("Column types selected for join operation doesnt match");
+                throw new DataValueTypeException("Column types selected for join operation didn't match!\n" +
+                    $"{firstColumn.Name} columnType ={DataValueType.GetType(firstColumn.DataValueType).Name}" +
+                    $"{secondColumn.Name} columnType ={DataValueType.GetType(secondColumn.DataValueType).Name}");
             }
             int indexOfFirstColumnEntity = Entity.Schema.Columns.IndexOf(firstColumn),
                 indexOfSecondColumnEntity = joinableEntity.Schema.Columns.IndexOf(secondColumn);
             
             var type = DataValueType.GetType(firstColumn.DataValueType);
 
-            var result = from first in _storage.Select(Entity, showSystemColumns).ToList()
-                         join second in _storage.Select(joinableEntity, showSystemColumns).ToList()
-                         on first[indexOfFirstColumnEntity].ToString() equals second[indexOfSecondColumnEntity].ToString()
-                         select first.Concat(second).ToList();
+            IEnumerable<List<object>>  result = null;
+            if (showSystemColumns)
+            {
+                result = from first in _storage.Select(Entity, showSystemColumns).ToList()
+                             join second in _storage.Select(joinableEntity, showSystemColumns).ToList()
+                             on first[indexOfFirstColumnEntity].ToString() equals second[indexOfSecondColumnEntity].ToString()
+                             select first.Concat(second).ToList();
+            }
+            else
+            {
+                result = from first in _storage.Select(Entity, showSystemColumns).ToList()
+                             join second in _storage.Select(joinableEntity, showSystemColumns).ToList()
+                             on first[indexOfFirstColumnEntity-1].ToString() equals second[indexOfSecondColumnEntity-1].ToString()
+                             select first.Concat(second).ToList();
+            }
+            
+
             return result.ToList();
         }
 
@@ -175,6 +191,21 @@ namespace DB_Engine.Implementations.Servises
                 return result2;
             }).ToList();
             return result;
+        }
+
+        public void UpdateSchemaStructure()
+        {
+            _storage.UpdateDataBaseStructure();
+        }
+
+        public void DeleteRange(List<Guid> guids)
+        {
+            _storage.DeleteRange(Entity, guids);
+        }
+
+        public override string ToString()
+        {
+            return Entity.Name;
         }
     }
 }

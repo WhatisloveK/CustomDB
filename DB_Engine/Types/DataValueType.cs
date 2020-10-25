@@ -1,7 +1,10 @@
 ﻿using DB_Engine.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace DB_Engine.Types
 {
@@ -67,6 +70,7 @@ namespace DB_Engine.Types
             }
         }
 
+
         public static bool IsValidValue(Guid dataValueTypeId, object value)
         {
             var currentType = GetType(dataValueTypeId);
@@ -81,6 +85,67 @@ namespace DB_Engine.Types
                 return false;
             }
         }
+
+        public static object GetTypedValue(Guid dataValueType, string value)
+        {
+            try
+            {
+                return _parseStrigns[dataValueType](value);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidCastException("Unsupported type", ex);
+            }
+        }
+
+        private static Dictionary<Guid, Func<string, object>> _parseStrigns =>
+            new Dictionary<Guid, Func<string, object>>
+            {
+                [CharDataValueTypeId] = new Func<string, object>(x => x.First()),
+                [IntegerDataValueTypeId] = new Func<string, object>(x => int.Parse(x)),
+                [RealDataValueTypeId] = new Func<string, object>(x => double.Parse(x)),
+                [StringDataValueTypeId] = new Func<string, object>(x => x),
+                [ComplexIntegerDataValueTypeId] = new Func<string, object>(x =>
+                {
+                    try
+                    {
+                        return JsonSerializer.Deserialize<ComplexInteger>(x);
+                    }
+                    catch
+                    {
+                        var regexForRealPart = new Regex(@"^(?=[iI.\d+-])([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?(?![iI.\d]))?");
+                        var regexForImagePart = new Regex(@"([+-]?(?:(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)?[iI])?$");
+                        var matchesReal = regexForRealPart.Matches(x);
+                        var matchesImage = regexForImagePart.Matches(x);
+                        var result = new ComplexInteger
+                        {
+                            RealValue = (matchesReal.Count == 1 && matchesReal[0].Value != "") ? int.Parse(matchesReal[0].Value) : 0,
+                            ImageValue = (matchesImage.Count >= 1 && matchesImage[0].Value != "") ? int.Parse(matchesImage[0].Value.Remove(matchesImage[0].Value.Length - 1)) : 0
+                        };
+                        return result;
+                    }
+                }),
+                [ComplexRealDataValueTypeId] = new Func<string, object>(x => 
+                {
+                    try
+                    {
+                        return JsonSerializer.Deserialize<ComplexReal>(x);
+                    }
+                    catch
+                    {
+                        var regexForRealPart = new Regex(@"^(?=[iI.\d+-])([+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?(?![iI.\d]))?");
+                        var regexForImagePart = new Regex(@"([+-]?(?:(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)?[iI])?$");
+                        var matchesReal = regexForRealPart.Matches(x);
+                        var matchesImage = regexForImagePart.Matches(x);
+                        var result = new ComplexReal
+                        {
+                            RealValue = (matchesReal.Count == 1 && matchesReal[0].Value != "") ? double.Parse(matchesReal[0].Value) : 0,
+                            ImageValue = (matchesImage.Count >= 1 && matchesImage[0].Value != "") ? double.Parse(matchesImage[0].Value.Remove(matchesImage[0].Value.Length - 1)) : 0
+                        };
+                        return result;
+                    }
+                })
+            };
     }
 
 }

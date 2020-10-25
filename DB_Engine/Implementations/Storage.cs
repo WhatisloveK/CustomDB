@@ -116,14 +116,17 @@ namespace DB_Engine.Implementations
                 {
                     for (int i = 0; i < element.Count; i++)
                     {
-                        if (!PassAllValidators(entity.Schema.Columns[i].Validators, element[i]))
+                        if (!PassAllValidators(entity.Schema.Columns[i+1].Validators, element[i]))
                         {
                             return false;
                         }
                     }
                     return true;
                 }).ToList();
-
+                rows.ForEach((item) =>
+                {
+                    item.Insert(0, Guid.NewGuid());
+                });
                 var source = entity.Sources.Last();
                 source.WriteData(rows);
             }
@@ -278,6 +281,20 @@ namespace DB_Engine.Implementations
             });
         }
 
+        public void DeleteRange(Entity entity, List<Guid> guids)
+        {
+            if (entity.Sources == null || entity.Sources.Count == 0)
+            {
+                throw new StorageException("The table is empty!");
+            }
 
+            Parallel.ForEach(entity.Sources, (source) =>
+            {
+                var data = source.GetData();
+                data.RemoveAll(element => guids.Contains(Guid.Parse(element[0].ToString())));
+
+                source.WriteData(data);
+            });
+        }
     }
 }
