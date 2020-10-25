@@ -150,8 +150,8 @@ namespace DB_Engine.Implementations.Servises
             if(firstColumn.DataValueType!= secondColumn.DataValueType)
             {
                 throw new DataValueTypeException("Column types selected for join operation didn't match!\n" +
-                    $"{firstColumn.Name} columnType ={DataValueType.GetType(firstColumn.DataValueType).Name}" +
-                    $"{secondColumn.Name} columnType ={DataValueType.GetType(secondColumn.DataValueType).Name}");
+                    $"{firstColumn.Name} columnType = {DataValueType.GetType(firstColumn.DataValueType).Name}\n" +
+                    $"{secondColumn.Name} columnType = {DataValueType.GetType(secondColumn.DataValueType).Name}");
             }
             int indexOfFirstColumnEntity = Entity.Schema.Columns.IndexOf(firstColumn),
                 indexOfSecondColumnEntity = joinableEntity.Schema.Columns.IndexOf(secondColumn);
