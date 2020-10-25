@@ -40,7 +40,7 @@ namespace DB_Engine.Implementations
 
         public void WriteData(List<List<object>> data)
         {
-            if (!(data == null || data.Count == 0))
+            if (!(data == null))
             {
                 var newStringData = JsonSerializer.Serialize(data);
 
