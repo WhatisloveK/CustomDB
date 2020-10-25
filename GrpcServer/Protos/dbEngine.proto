@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcServer";
+
+package dbEngine;
+
+// The greeting service definition.
+service DatabaseService {
+  // Sends a greeting
+  rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc CreateDatabase (CreateDbRequest) returns (BaseReply);
+  rpc CreateTable (TableRequest) returns (BaseReply);
+  rpc DeleteTable (TableRequest) returns (BaseReply);
+  rpc GetTableList (GetTableListRequest) returns ()
+}
+
+// The request message containing the user's name.
+message HelloRequest {
+  string name = 1;
+}
+
+message CreateDbRequest {
+	string name = 1;
+	string rootPath = 2;
+	int64 fileSize = 3;
+}
+
+message GetTableListRequest {
+	string dbName = 1;
+}
+
+message GetTableListReply {
+	repeated string tables = 1;
+}
+
+message TableRequest {
+	string tableName = 1;
+}
+
+
+message BaseReply {
+	int32 code = 1;
+	string message = 2;
+	string stackTrace = 3;
+}
+
+// The response message containing the greetings.
+message HelloReply {
+  string message = 1;
+}
