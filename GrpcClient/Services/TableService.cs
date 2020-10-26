@@ -7,15 +7,10 @@ using System.Net.Http;
 
 namespace GrpcClient
 {
-    class TableService
+    public class TableService
     {
-        public static string backSlash = @"\";
-        public static string databaseExtension = ".vldb";
-        public static string tableExtension = ".vldb";
-        public static string path = @"D:\Programming\4term\IT\DBFILES\grpc\";
-
-        static GrpcChannel channel;
-        static EntityService.EntityServiceClient client;
+        private GrpcChannel channel;
+        private EntityService.EntityServiceClient client;
 
         public TableService()
         {
@@ -26,7 +21,14 @@ namespace GrpcClient
             client = new EntityService.EntityServiceClient(channel);
         }
 
-        public static async Task AddColumn(string dbname, string tableName, string columnName, string dataValueTypeID, List<Validator> validators)
+        private void WriteToConsole(string message)
+        {
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine(message);
+        }
+
+        public  async Task AddColumn(string dbname, string tableName, string columnName, string dataValueTypeID, List<Validator> validators)
         {
             var request = new AddColumnRequest
             {
@@ -40,12 +42,19 @@ namespace GrpcClient
 
             var reply = await client.AddColumnAsync(request);
 
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Column added: " + columnName);
+            
+            if (reply.Code == 200)
+            {
+                WriteToConsole("Column added: " + columnName);
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+            }
+            
         }
 
-        public static async Task DropColumn(string dbname, string tableName, string columnName)
+        public  async Task DropColumn(string dbname, string tableName, string columnName)
         {
             var reply = await client.DropColumnAsync(new DropColumnRequst
             {
@@ -54,12 +63,17 @@ namespace GrpcClient
                 ColumnName = columnName
             });
 
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Column dropped: " + columnName);
+            if (reply.Code == 200)
+            {
+                WriteToConsole("Column dropped: " + columnName);
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+            }
         }
 
-        public static async Task Insert(string dbname, string tableName, List<Row> rows)
+        public  async Task Insert(string dbname, string tableName, List<Row> rows)
         {
             var request = new InsertRequest
             {
@@ -70,13 +84,17 @@ namespace GrpcClient
             request.Rows.AddRange(rows);
 
             var reply = await client.InsertAsync(request);
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Rows inserted.");
+            if (reply.Code == 200)
+            {
+                WriteToConsole("Rows inserted.");
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+            }
         }
 
-        public static async Task Delete(string dbname, string tableName, List<string> guids)
+        public  async Task Delete(string dbname, string tableName, List<string> guids)
         {
             var request = new DeleteRequest
             {
@@ -88,9 +106,35 @@ namespace GrpcClient
 
             var reply = await client.DeleteAsync(request);
 
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Row(s) deleted.");
+            if (reply.Code == 200)
+            {
+                WriteToConsole("Row(s) deleted.");
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+            }
+        }
+
+        public async Task Select(string dbname, string tableName, bool showSysColumns = false, Dictionary<string,Validator> conditions = null)
+        {
+            var request = new SelectRequest
+            {
+                DbName = dbname,
+                TableName = tableName,
+                ShowSysColumns = showSysColumns
+            };
+
+            var reply = await client.SelectAsync(request);
+
+            if (reply.Code == 200)
+            {
+                WriteToConsole(reply.Rows.ToString());
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+            }
         }
 
         //public static Task Update(string dbname, string tableName, List<Row> rows, List<ConditionsFieldEntry>)

@@ -7,18 +7,16 @@ using System.IO;
 using System.Globalization;
 using Google.Protobuf;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
+using System.Linq;
 
 namespace GrpcClient
 {
     public class DatabaseService
     {
-        public static string backSlash = @"\";
-        public static string databaseExtension = ".vldb";
-        public static string tableExtension = ".vldb";
-        public static string path = @"D:\Programming\4term\IT\DBFILES\grpc\";
-
-        static GrpcChannel channel;
-        static DBService.DBServiceClient client;
+        
+        private GrpcChannel channel;
+        private DBService.DBServiceClient client;
 
         public DatabaseService()
         {
@@ -28,22 +26,35 @@ namespace GrpcClient
             channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions { HttpHandler = httpHandler });
             client = new DBService.DBServiceClient(channel);
         }
+        private void WriteToConsole(string message)
+        {
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine(message);
+        }
 
         public async Task CreateDatabase(string name, long filesize)
         {
             var request = new CreateDbRequest();
             request.Name = name;
-            request.RootPath = path;
+            request.RootPath = Constants.Path;
             request.FileSize = filesize;
             
             var reply = await client.CreateDatabaseAsync(request);
 
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Database created.");
+            
+            if (reply.Code == 200)
+            {
+                WriteToConsole("Database created: " + name);
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+            }
+            
         }
 
-        public static async Task CreateTable(string dbName, string tableName)
+        public  async Task CreateTable(string dbName, string tableName)
         {
             var reply = await client.CreateTableAsync(new TableRequest
             {
@@ -51,12 +62,18 @@ namespace GrpcClient
                 TableName = tableName
             });
 
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Table created: " + tableName);
+            if (reply.Code == 200)
+            {
+                WriteToConsole("Table created: " + tableName);
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+            }
+            
         }
 
-        public static async Task DeleteTable(string dbName, string tableName)
+        public  async Task DeleteTable(string dbName, string tableName)
         {
             var reply = await client.DeleteTableAsync(new TableRequest
             {
@@ -64,21 +81,31 @@ namespace GrpcClient
                 TableName = tableName
             });
 
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Table deleted: " + tableName);
+            if (reply.Code == 200)
+            {
+                WriteToConsole("Table deleted: " + tableName);
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+            }
+           
         }
 
-        public static async Task GetTableList(string dbName)
+        public  async Task GetTableList(string dbName)
         {
             var reply = await client.GetTableListAsync(new GetTableListRequest
             {
                 DbName = dbName
             });
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Tables list:");
+            if (reply.Code == 200)
+            {
+                WriteToConsole("Tables list: "+reply.Tables.Aggregate((x, y) => $"{x}, {y}"));
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: "+reply.Message+"\nStackTrace: "+reply.StackTrace);
+            }
         }
     }
 }
