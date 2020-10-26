@@ -137,13 +137,24 @@ namespace GrpcClient
             }
         }
 
-        //public static Task Update(string dbname, string tableName, List<Row> rows, List<ConditionsFieldEntry>)
-        //{
-        //    var request = new DeleteRequest
-        //    {
-        //        DbName = dbname,
-        //        TableName = tableName
-        //    };
-        //}
+        public async Task Update(string dbname, string tableName, List<Row> rows, List<ConditionsFieldEntry>fields = null)
+        {
+            var request = new UpdateRequest
+            {
+                DbName = dbname,
+                TableName = tableName
+            };
+
+            request.Rows.AddRange(rows);
+            var reply = await client.UpdateAsync(request);
+            if (reply.Code == 200)
+            {
+                WriteToConsole("Updated successfully");
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+            }
+        }
     }
 }
