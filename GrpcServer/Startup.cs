@@ -31,7 +31,7 @@ namespace GrpcServer
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapGrpcService<MainDbService>();
+                endpoints.MapGrpcService<DatabaseService>();
 
                 endpoints.MapGet("/", async context =>
                 {
