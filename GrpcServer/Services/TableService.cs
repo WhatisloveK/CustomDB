@@ -155,5 +155,101 @@ namespace GrpcServer.Services
         }
 
 
+        public override Task<SelectReply> InnerJoin(InnerJoinRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var response = new SelectReply()
+                {
+                    Code = 200
+                };
+                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IEntityService entityService = databaseService.GetEntityService(request.FirstTableName);
+                IEntityService entityService2 = databaseService.GetEntityService(request.SecondTableName);
+                var data = new List<List<object>>();
+                var resultRows = new RepeatedField<Row>();
+                data = entityService.InnerJoin(entityService2.Entity, new Tuple<string, string>(request.FirstColumnName, request.SecondColumnName), request.ShowSysColumns);
+                Parallel.ForEach(data, (row) => {
+                    var resultRow = new Row();
+                    resultRow.Items.AddRange(row.Select(x => x.ToString()));
+                    response.Rows.Add(resultRow);
+                });
+                return Task.FromResult(response);
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult(new SelectReply() { Code = 400, Message = ex.Message, StackTrace = ex.StackTrace });
+            }
+        }
+
+        public override Task<SelectReply> CrossJoin(CrossJoinRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var response = new SelectReply()
+                {
+                    Code = 200
+                };
+                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IEntityService entityService = databaseService.GetEntityService(request.FirstTableName);
+                IEntityService entityService2 = databaseService.GetEntityService(request.SecondTableName);
+                var data = new List<List<object>>();
+                var resultRows = new RepeatedField<Row>();
+                data = entityService.CrossJoin(entityService2.Entity, request.ShowSysColumns);
+                Parallel.ForEach(data, (row) => {
+                    var resultRow = new Row();
+                    resultRow.Items.AddRange(row.Select(x => x.ToString()));
+                    response.Rows.Add(resultRow);
+                });
+                return Task.FromResult(response);
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult(new SelectReply() { Code = 400, Message = ex.Message, StackTrace = ex.StackTrace });
+            }
+        }
+
+        public override Task<BaseReply> Insert(InsertRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var response = new BaseReply()
+                {
+                    Code = 200
+                };
+                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IEntityService entityService = databaseService.GetEntityService(request.TableName);
+                var _columns = entityService.Entity.Schema.Columns;
+                var values = new List<List<object>>();
+
+                for (int i = 0; i < request.Rows.Count-1; i++)
+                {
+                    var row = new List<object>();
+
+                    for (var j = 0; j < request.Rows[0].Items.Count; j++)
+                    {
+
+                        string value = request.Rows[i].Items[j];
+                        try
+                        {
+                            row.Add(DataValueType.GetTypedValue(_columns[j + 1].DataValueType, value));
+                        }
+                        catch
+                        {
+
+                            throw new DataValueTypeException(string.Format("In row number {0} in column {1} value \"{2}\" has incorrect type!", i + 1, j + 1, value));
+                        }
+                    }
+                    values.Add(row);
+                }
+                entityService.InsertRange(values);
+                return Task.FromResult(response);
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult(new BaseReply() { Code = 400, Message = ex.Message, StackTrace = ex.StackTrace });
+            }
+        }
+
     }
 }
