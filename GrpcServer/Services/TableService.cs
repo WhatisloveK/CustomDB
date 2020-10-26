@@ -52,6 +52,13 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("Column added: " + request.TableName + ", " + request.ColumnName);
+                Console.WriteLine("***************************************************************************************************************");
+
                 return Task.FromResult(response);
             }
             catch (Exception ex)
@@ -70,6 +77,13 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("Column dropped: " + request.TableName + ", " + request.ColumnName);
+                Console.WriteLine("***************************************************************************************************************");
+
                 return Task.FromResult(response);
             }
             catch (Exception ex)
@@ -103,6 +117,13 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("Rows deleted:" + request.TableName);
+                Console.WriteLine("***************************************************************************************************************");
+
                 return Task.FromResult(response);
             }
             catch (Exception ex)
@@ -146,6 +167,13 @@ namespace GrpcServer.Services
                     resultRow.Items.AddRange(row.Select(x => x.ToString()));
                     response.Rows.Add(resultRow);
                 });
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("Rows selected: " + request.TableName);
+                Console.WriteLine("***************************************************************************************************************");
+
                 return Task.FromResult(response);
             }
             catch (Exception ex)
@@ -174,6 +202,13 @@ namespace GrpcServer.Services
                     resultRow.Items.AddRange(row.Select(x => x.ToString()));
                     response.Rows.Add(resultRow);
                 });
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("Inner join: " + request.FirstColumnName+ ", " + request.SecondColumnName);
+                Console.WriteLine("***************************************************************************************************************");
+
                 return Task.FromResult(response);
             }
             catch (Exception ex)
@@ -201,6 +236,13 @@ namespace GrpcServer.Services
                     resultRow.Items.AddRange(row.Select(x => x.ToString()));
                     response.Rows.Add(resultRow);
                 });
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("Cross join: " + request.FirstTableName + ", " + request.SecondTableName);
+                Console.WriteLine("***************************************************************************************************************");
+
                 return Task.FromResult(response);
             }
             catch (Exception ex)
@@ -243,6 +285,13 @@ namespace GrpcServer.Services
                     values.Add(row);
                 }
                 entityService.InsertRange(values);
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("Rows inserted: " + request.TableName + ", " + request.Rows.Count);
+                Console.WriteLine("***************************************************************************************************************");
+
                 return Task.FromResult(response);
             }
             catch (Exception ex)

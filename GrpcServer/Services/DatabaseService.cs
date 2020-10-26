@@ -24,6 +24,13 @@ namespace GrpcServer
             try
             {
                 IDataBaseService databaseService = new DataBaseService(request.Name, request.RootPath, request.FileSize);
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("Database created: " + request.Name);
+                Console.WriteLine("***************************************************************************************************************");
+
                 return Task.FromResult(new BaseReply() { Code = 200, Message = "", StackTrace = "" });
             }
             catch(Exception ex)
@@ -38,6 +45,13 @@ namespace GrpcServer
             {
                 IDataBaseService databaseService = new DataBaseService(request.DbName);
                 databaseService.AddTable(request.TableName);
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("Table created: " + request.TableName);
+                Console.WriteLine("***************************************************************************************************************");
+
                 return Task.FromResult(new BaseReply() { Code = 200 });
             }
             catch (Exception ex)
@@ -53,6 +67,13 @@ namespace GrpcServer
             {
                 IDataBaseService databaseService = new DataBaseService(request.DbName);
                 databaseService.DeleteTable(request.TableName);
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("Table deleted: " + request.TableName);
+                Console.WriteLine("***************************************************************************************************************");
+
                 return Task.FromResult(new BaseReply() { Code = 200 });
             }
             catch (Exception ex)
@@ -71,6 +92,13 @@ namespace GrpcServer
                     Code = 200
                 };
                 response.Tables.AddRange(databaseService.GetTables().Select(x => x.Entity.Name));
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("List of tables displayed");
+                Console.WriteLine("***************************************************************************************************************");
+
                 return Task.FromResult(response);
             }
             catch (Exception ex)
