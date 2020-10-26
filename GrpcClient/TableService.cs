@@ -24,8 +24,78 @@ namespace GrpcClient
 
         public static async Task AddColumn(string dbname, string tableName, string columnName, string dataValueTypeID, List<Validator> validators)
         {
-            //var 
+            var request = new AddColumnRequest
+            {
+                DbName = dbname,
+                TableName = tableName,
+                ColumnName = columnName,
+                DataValueTypeId = dataValueTypeID
+            };
+
+            request.Validators.AddRange(validators);
+
+            var reply = await client.AddColumnAsync(request);
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Column added: " + columnName);
         }
 
+        public static async Task DropColumn(string dbname, string tableName, string columnName)
+        {
+            var reply = await client.DropColumnAsync(new DropColumnRequst
+            {
+                DbName = dbname,
+                TableName = tableName,
+                ColumnName = columnName
+            });
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Column dropped: " + columnName);
+        }
+
+        public static async Task Insert(string dbname, string tableName, List<Row> rows)
+        {
+            var request = new InsertRequest
+            {
+                DbName = dbname,
+                TableName = tableName
+            };
+
+            request.Rows.AddRange(rows);
+
+            var reply = await client.InsertAsync(request);
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Rows inserted.");
+        }
+
+        public static async Task Delete(string dbname, string tableName, List<string> guids)
+        {
+            var request = new DeleteRequest
+            {
+                DbName = dbname,
+                TableName = tableName
+            };
+
+            request.Guids.AddRange(guids);
+
+            var reply = await client.DeleteAsync(request);
+
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Row(s) deleted.");
+        }
+
+        //public static Task Update(string dbname, string tableName, List<Row> rows, List<ConditionsFieldEntry>)
+        //{
+        //    var request = new DeleteRequest
+        //    {
+        //        DbName = dbname,
+        //        TableName = tableName
+        //    };
+        //}
     }
 }

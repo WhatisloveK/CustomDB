@@ -70,7 +70,7 @@ message DeleteRequest {
 }
 
 message Row {
-	repeated string item = 1;
+	repeated string items = 1;
 }
 
 message InsertRequest {
@@ -79,7 +79,7 @@ message InsertRequest {
 	repeated Row rows = 3;
 }
 
-message ConditionsMap {
+message ConditionsFieldEntry {
     string key = 1;
     repeated Validator value = 2;
 }
@@ -88,13 +88,13 @@ message UpdateRequest {
 	string dbName = 1;
 	string tableName = 2;
 	repeated Row rows = 3;
-	ConditionsMap conditions = 4;
+	repeated ConditionsFieldEntry conditions = 4;
 }
 
 message SelectRequest {
 	string dbName = 1;
 	string tableName = 2;
-	ConditionsMap conditions = 3;
+	repeated ConditionsFieldEntry conditions = 3;
 	bool showSysColumns = 4; 
 }
 
