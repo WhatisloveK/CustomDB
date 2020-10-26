@@ -15,6 +15,7 @@ namespace GrpcServer.Services
 {
     public class TableService : EntityService.EntityServiceBase
     {
+        private string root = "D:\\Programming\\4term\\IT\\DBFILES\\grpc\\";
         private IValidator CreateValidator(Validator validator)
         {
             var type = DataValueType.GetType(Guid.Parse(validator.DataValueTypeId));
@@ -37,7 +38,7 @@ namespace GrpcServer.Services
         {
             try
             {
-                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 var validators = new List<IValidator>();
 
@@ -70,7 +71,7 @@ namespace GrpcServer.Services
         {
             try
             {
-                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 entityService.DropColumn(request.ColumnName);
                 var response = new BaseReply()
@@ -96,7 +97,7 @@ namespace GrpcServer.Services
         {
             try
             {
-                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 if (request.Guids.Count > 0)
                 {
@@ -140,7 +141,7 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
-                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 var data = new List<List<object>>();
                 var resultRows = new RepeatedField<Row>();
@@ -191,7 +192,7 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
-                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
                 IEntityService entityService = databaseService.GetEntityService(request.FirstTableName);
                 IEntityService entityService2 = databaseService.GetEntityService(request.SecondTableName);
                 var data = new List<List<object>>();
@@ -225,7 +226,7 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
-                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
                 IEntityService entityService = databaseService.GetEntityService(request.FirstTableName);
                 IEntityService entityService2 = databaseService.GetEntityService(request.SecondTableName);
                 var data = new List<List<object>>();
@@ -259,12 +260,12 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
-                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 var _columns = entityService.Entity.Schema.Columns;
                 var values = new List<List<object>>();
 
-                for (int i = 0; i < request.Rows.Count-1; i++)
+                for (int i = 0; i < request.Rows.Count; i++)
                 {
                     var row = new List<object>();
 

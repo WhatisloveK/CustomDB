@@ -18,7 +18,7 @@ namespace GrpcServer
         {
             _logger = logger;
         }
-
+        private string root  = "D:\\Programming\\4term\\IT\\DBFILES\\grpc\\";
         public override Task<BaseReply> CreateDatabase(CreateDbRequest request, ServerCallContext context)
         {
             try
@@ -43,7 +43,7 @@ namespace GrpcServer
         {
             try
             {
-                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName+".vldb");
                 databaseService.AddTable(request.TableName);
 
                 Console.WriteLine();
@@ -65,7 +65,7 @@ namespace GrpcServer
 
             try
             {
-                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
                 databaseService.DeleteTable(request.TableName);
 
                 Console.WriteLine();
@@ -86,7 +86,7 @@ namespace GrpcServer
         {
             try
             {   
-                IDataBaseService databaseService = new DataBaseService(request.DbName);
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
                 var response = new GetTableListReply()
                 {
                     Code = 200

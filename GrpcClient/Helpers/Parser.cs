@@ -56,18 +56,18 @@ namespace GrpcClient
                     throw new Exception("Incorrect Command");
                 }
             }
-            catch(Exception)
+            catch(Exception ex)
             {
                 Console.WriteLine("Incorrect Command");
             }
-            
+
         }
 
         public  async Task ExecuteCommand(string command, Dictionary<string,string> parametersDictionary)
         {
             switch (command)
             {
-                case "crtdb":
+                case "create-db":
                     await databaseService.CreateDatabase(parametersDictionary["-d"], int.Parse(parametersDictionary["-s"]));
                     break;
                 case "get-tables":
@@ -102,7 +102,8 @@ namespace GrpcClient
                         await tableService.Insert(parametersDictionary["-d"], parametersDictionary["-t"], list);
                         break;
                     }
-                case "intabl":
+                case "inner-join":
+                    await tableService.InnerJoin(parametersDictionary["-d"], parametersDictionary["-t"], parametersDictionary["-t2"], parametersDictionary["-c"], parametersDictionary["-c2"]);
                     break;
                 case "delete-tbl":
                     break;

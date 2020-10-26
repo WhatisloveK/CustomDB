@@ -4,6 +4,7 @@ using System.Text;
 using Grpc.Net.Client;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Diagnostics;
 
 namespace GrpcClient
 {
@@ -38,7 +39,8 @@ namespace GrpcClient
                 DataValueTypeId = dataValueTypeID
             };
 
-            request.Validators.AddRange(validators);
+            if(validators!=null)
+                request.Validators.AddRange(validators);
 
             var reply = await client.AddColumnAsync(request);
 
@@ -150,6 +152,28 @@ namespace GrpcClient
             if (reply.Code == 200)
             {
                 WriteToConsole("Updated successfully");
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+            }
+        }
+
+        public async Task InnerJoin(string dbname, string tableName, string tableName2, string column, string column2)
+        {
+            var request = new InnerJoinRequest
+            {
+                DbName = dbname,
+                FirstTableName = tableName,
+                SecondTableName = tableName2,
+                FirstColumnName = column,
+                SecondColumnName = column2
+            };
+
+            var reply = await client.InnerJoinAsync(request);
+            if (reply.Code == 200)
+            {
+                WriteToConsole(reply.Rows.ToString());
             }
             else
             {

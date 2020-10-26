@@ -8,8 +8,19 @@ namespace GrpcClient
         
         static async Task Main(string[] args)
         {
-            var t = new DatabaseService();
-            await t.CreateDatabase("test1", 100);
+            var parser = new Parser();
+
+            while (true)
+            {
+                
+                Console.WriteLine("Type your command:");
+
+                string input = Console.ReadLine();
+                await parser.Parse(input);
+
+                Console.WriteLine();
+                Console.WriteLine();
+            }
         }
     }
 }
