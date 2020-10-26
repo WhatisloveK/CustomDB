@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace GrpcClient
 {
     class Program
     {
-        static void Main(string[] args)
+        
+        static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var t = new DatabaseService();
+            await t.CreateDatabase("test1", 100);
         }
     }
 }

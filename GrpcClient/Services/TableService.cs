@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Grpc.Net.Client;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace GrpcClient
 {
@@ -11,14 +12,17 @@ namespace GrpcClient
         public static string backSlash = @"\";
         public static string databaseExtension = ".vldb";
         public static string tableExtension = ".vldb";
-        public static string path = @"C:\University\IT\dbms_core\databases\";
+        public static string path = @"D:\Programming\4term\IT\DBFILES\grpc\";
 
         static GrpcChannel channel;
         static EntityService.EntityServiceClient client;
 
         public TableService()
         {
-            channel = GrpcChannel.ForAddress("https://localhost:5001");
+            var httpHandler = new HttpClientHandler();
+            httpHandler.ServerCertificateCustomValidationCallback =
+                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions { HttpHandler = httpHandler });
             client = new EntityService.EntityServiceClient(channel);
         }
 

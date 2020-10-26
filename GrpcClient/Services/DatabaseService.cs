@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Globalization;
 using Google.Protobuf;
+using System.Net.Http;
 
 namespace GrpcClient
 {
@@ -14,25 +15,28 @@ namespace GrpcClient
         public static string backSlash = @"\";
         public static string databaseExtension = ".vldb";
         public static string tableExtension = ".vldb";
-        public static string path = @"C:\University\IT\dbms_core\databases\VladDB\";
+        public static string path = @"D:\Programming\4term\IT\DBFILES\grpc\";
 
         static GrpcChannel channel;
         static DBService.DBServiceClient client;
 
         public DatabaseService()
         {
-            channel = GrpcChannel.ForAddress("https://localhost:5001");
+            var httpHandler = new HttpClientHandler();
+            httpHandler.ServerCertificateCustomValidationCallback =
+                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions { HttpHandler = httpHandler });
             client = new DBService.DBServiceClient(channel);
         }
 
-        public static async Task CreateDatabase(string name, long filesize)
+        public async Task CreateDatabase(string name, long filesize)
         {
-            var reply = await client.CreateDatabaseAsync(new CreateDbRequest
-            {
-                Name = name,
-                RootPath = path,
-                FileSize = filesize
-            });
+            var request = new CreateDbRequest();
+            request.Name = name;
+            request.RootPath = path;
+            request.FileSize = filesize;
+            
+            var reply = await client.CreateDatabaseAsync(request);
 
             Console.WriteLine();
             Console.WriteLine();
