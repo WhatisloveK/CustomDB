@@ -15,14 +15,16 @@ namespace GrpcClient
     public class DatabaseService
     {
         
-        private GrpcChannel channel;
-        private DBService.DBServiceClient client;
+        private readonly GrpcChannel channel;
+        private readonly DBService.DBServiceClient client;
 
         public DatabaseService()
         {
-            var httpHandler = new HttpClientHandler();
-            httpHandler.ServerCertificateCustomValidationCallback =
-                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            var httpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
             channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions { HttpHandler = httpHandler });
             client = new DBService.DBServiceClient(channel);
         }
@@ -35,11 +37,13 @@ namespace GrpcClient
 
         public async Task CreateDatabase(string name, long filesize)
         {
-            var request = new CreateDbRequest();
-            request.Name = name;
-            request.RootPath = Constants.Path;
-            request.FileSize = filesize;
-            
+            var request = new CreateDbRequest
+            {
+                Name = name,
+                RootPath = Constants.Path,
+                FileSize = filesize
+            };
+
             var reply = await client.CreateDatabaseAsync(request);
 
             

@@ -8,7 +8,7 @@ namespace GrpcClient
 {
     class Parser
     {
-        private static Dictionary<string, List<string>> commands = new Dictionary<string, List<string>>()
+        private readonly Dictionary<string, List<string>> commands = new Dictionary<string, List<string>>()
         {
             { "create-db",    new List<string>{ "-d","-s"} },
             { "get-tables",   new List<string>{ "-d"} },
@@ -21,8 +21,8 @@ namespace GrpcClient
             { "inner-join",   new List<string>{ "-d",  "-t", "-t2","-c","-c2" } }
         };
 
-        private DatabaseService databaseService = new DatabaseService();
-        private TableService tableService = new TableService();
+        private readonly DatabaseService databaseService = new DatabaseService();
+        private readonly TableService tableService = new TableService();
 
 
         public async Task Parse(string input)
@@ -58,7 +58,7 @@ namespace GrpcClient
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Incorrect Command");
+                Console.WriteLine(ex.Message);
             }
 
         }
@@ -81,7 +81,6 @@ namespace GrpcClient
                         break;
                 case "insert":
                     {
-                        var values = parametersDictionary["-r"].Split(",");
                         var list = new List<Row>();
                         Row row = new Row();
                         row.Items.Add(parametersDictionary["-r"].Split(","));
@@ -94,7 +93,6 @@ namespace GrpcClient
                     break;
                 case "update":
                     {
-                        var values = parametersDictionary["-r"].Split(",");
                         var list = new List<Row>();
                         Row row = new Row();
                         row.Items.Add(parametersDictionary["-r"].Split(","));

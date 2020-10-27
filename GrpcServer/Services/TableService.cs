@@ -15,24 +15,19 @@ namespace GrpcServer.Services
 {
     public class TableService : EntityService.EntityServiceBase
     {
-        private string root = "D:\\Programming\\4term\\IT\\DBFILES\\grpc\\";
+        private readonly string root = "D:\\Programming\\4term\\IT\\DBFILES\\grpc\\";
         private IValidator CreateValidator(Validator validator)
         {
             var type = DataValueType.GetType(Guid.Parse(validator.DataValueTypeId));
-            
-            switch (type)
+
+            return type switch
             {
-                case var t when t == typeof(string):
-                    return new DB_Engine.Validators.Validator<string>((DB_Engine.Interfaces.ComparsonType)validator.ComparsonType, validator.Value);
-                case var t when t == typeof(int):
-                    return new DB_Engine.Validators.Validator<int>((DB_Engine.Interfaces.ComparsonType)validator.ComparsonType, int.Parse(validator.Value));
-                case var t when t == typeof(char):
-                    return new DB_Engine.Validators.Validator<char>((DB_Engine.Interfaces.ComparsonType)validator.ComparsonType, char.Parse(validator.Value));
-                case var t when t == typeof(double):
-                    return new DB_Engine.Validators.Validator<double>((DB_Engine.Interfaces.ComparsonType)validator.ComparsonType, double.Parse(validator.Value));
-                default:
-                    throw new DataValueTypeException($"Incorrect DataValueTypeId specified. IncorrectDataValueTypeId = \"{validator.DataValueTypeId}\"");
-            }
+                var t when t == typeof(string) => new DB_Engine.Validators.Validator<string>((DB_Engine.Interfaces.ComparsonType)validator.ComparsonType, validator.Value),
+                var t when t == typeof(int) => new DB_Engine.Validators.Validator<int>((DB_Engine.Interfaces.ComparsonType)validator.ComparsonType, int.Parse(validator.Value)),
+                var t when t == typeof(char) => new DB_Engine.Validators.Validator<char>((DB_Engine.Interfaces.ComparsonType)validator.ComparsonType, char.Parse(validator.Value)),
+                var t when t == typeof(double) => new DB_Engine.Validators.Validator<double>((DB_Engine.Interfaces.ComparsonType)validator.ComparsonType, double.Parse(validator.Value)),
+                _ => throw new DataValueTypeException($"Incorrect DataValueTypeId specified. IncorrectDataValueTypeId = \"{validator.DataValueTypeId}\""),
+            };
         }
         public override Task<BaseReply> AddColumn(AddColumnRequest request, ServerCallContext context)
         {

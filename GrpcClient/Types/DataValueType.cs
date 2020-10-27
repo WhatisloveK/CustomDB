@@ -26,46 +26,31 @@ namespace GrpcClient
 
         public static Type GetType(Guid dataValueTypeId)
         {
-            switch (dataValueTypeId)
+            return dataValueTypeId switch
             {
-                case var t when t == IntegerDataValueTypeId:
-                    return typeof(int);
-                case var t when t == RealDataValueTypeId:
-                    return typeof(double);
-                case var t when t == CharDataValueTypeId:
-                    return typeof(char);
-                case var t when t == StringDataValueTypeId:
-                    return typeof(string);
-                case var t when t == ComplexIntegerDataValueTypeId:
-                    return typeof(ComplexInteger);
-                case var t when t == ComplexRealDataValueTypeId:
-                    return typeof(ComplexReal);
-                case var t when t == UniqueidentifierDataValueTypeId:
-                    return typeof(Guid);
-                default:
-                    throw new DataValueTypeException($"Incorrect DataValueTypeId specified. IncorrectDataValueTypeId = \"{dataValueTypeId}\"");
-            }
+                var t when t == IntegerDataValueTypeId => typeof(int),
+                var t when t == RealDataValueTypeId => typeof(double),
+                var t when t == CharDataValueTypeId => typeof(char),
+                var t when t == StringDataValueTypeId => typeof(string),
+                var t when t == ComplexIntegerDataValueTypeId => typeof(ComplexInteger),
+                var t when t == ComplexRealDataValueTypeId => typeof(ComplexReal),
+                var t when t == UniqueidentifierDataValueTypeId => typeof(Guid),
+                _ => throw new DataValueTypeException($"Incorrect DataValueTypeId specified. IncorrectDataValueTypeId = \"{dataValueTypeId}\""),
+            };
         }
 
         public static Guid GetDataValueType(string type)
         {
-            switch (type)
+            return type switch
             {
-                case "int":
-                    return IntegerDataValueTypeId;
-                case "double":
-                    return RealDataValueTypeId;
-                case "char":
-                    return CharDataValueTypeId;
-                case "string":
-                    return StringDataValueTypeId;
-                case "cmplxInt":
-                    return ComplexIntegerDataValueTypeId;
-                case "cmplxReal":
-                    return ComplexRealDataValueTypeId;
-                default:
-                    throw new DataValueTypeException($"Incorrect Type specified. TypeName = \"{type}\"");
-            }
+                "int" => IntegerDataValueTypeId,
+                "double" => RealDataValueTypeId,
+                "char" => CharDataValueTypeId,
+                "string" => StringDataValueTypeId,
+                "cmplxInt" => ComplexIntegerDataValueTypeId,
+                "cmplxReal" => ComplexRealDataValueTypeId,
+                _ => throw new DataValueTypeException($"Incorrect Type specified. TypeName = \"{type}\""),
+            };
         }
 
 
@@ -88,7 +73,7 @@ namespace GrpcClient
         {
             try
             {
-                return _parseStrigns[dataValueType](value);
+                return ParseStrigns[dataValueType](value);
             }
             catch (Exception ex)
             {
@@ -96,7 +81,7 @@ namespace GrpcClient
             }
         }
 
-        private static Dictionary<Guid, Func<string, object>> _parseStrigns =>
+        private static Dictionary<Guid, Func<string, object>> ParseStrigns =>
             new Dictionary<Guid, Func<string, object>>
             {
                 [CharDataValueTypeId] = new Func<string, object>(x => x.First()),

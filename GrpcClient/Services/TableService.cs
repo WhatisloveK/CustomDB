@@ -10,14 +10,16 @@ namespace GrpcClient
 {
     public class TableService
     {
-        private GrpcChannel channel;
-        private EntityService.EntityServiceClient client;
+        private readonly GrpcChannel channel;
+        private readonly EntityService.EntityServiceClient client;
 
         public TableService()
         {
-            var httpHandler = new HttpClientHandler();
-            httpHandler.ServerCertificateCustomValidationCallback =
-                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+            var httpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
             channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions { HttpHandler = httpHandler });
             client = new EntityService.EntityServiceClient(channel);
         }
