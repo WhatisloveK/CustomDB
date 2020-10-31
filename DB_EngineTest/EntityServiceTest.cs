@@ -112,8 +112,10 @@ namespace DB_EngineTest
             List<List<object>> expectedList = new List<List<object>>
             {
                  new List<object>{"Test1", new ComplexInteger { RealValue=1,ImageValue=-1}, new ComplexReal { RealValue=1.5, ImageValue=2.04},"Test1", new ComplexInteger { RealValue=1,ImageValue=-1}, new ComplexReal { RealValue=1.5, ImageValue=2.04}  },
+                 new List<object>{"Test1", new ComplexInteger { RealValue=1,ImageValue=-1}, new ComplexReal { RealValue=1.5, ImageValue=2.04},"Test3", new ComplexInteger { RealValue = 1, ImageValue = -1 }, new ComplexReal { RealValue = 1.7, ImageValue = 2.04 }},
                  new List<object>{"Test2", new ComplexInteger { RealValue=2,ImageValue=-5}, new ComplexReal { RealValue=4.5, ImageValue=2.04}, "Test2", new ComplexInteger { RealValue=2,ImageValue=-5}, new ComplexReal { RealValue=4.5, ImageValue=2.04} },
-                 new List<object>{"Test3", new ComplexInteger { RealValue = 1, ImageValue = -1 }, new ComplexReal { RealValue = 1.7, ImageValue = 2.04 }, "Test3", new ComplexInteger { RealValue = 1, ImageValue = -1 }, new ComplexReal { RealValue = 1.7, ImageValue = 2.04 } }
+                 new List<object>{ "Test3", new ComplexInteger { RealValue = 1, ImageValue = -1 }, new ComplexReal { RealValue = 1.7, ImageValue = 2.04 },"Test1", new ComplexInteger { RealValue=1,ImageValue=-1}, new ComplexReal { RealValue=1.5, ImageValue=2.04}},
+                new List<object>{"Test3", new ComplexInteger { RealValue = 1, ImageValue = -1 }, new ComplexReal { RealValue = 1.7, ImageValue = 2.04 }, "Test3", new ComplexInteger { RealValue = 1, ImageValue = -1 }, new ComplexReal { RealValue = 1.7, ImageValue = 2.04 } }
             };
             var json = JsonSerializer.Serialize(expectedList);
             var expected = JsonSerializer.Deserialize<List<List<object>>>(json);

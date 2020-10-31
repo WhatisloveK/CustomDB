@@ -128,7 +128,10 @@ namespace DB_Engine.Implementations
                     item.Insert(0, Guid.NewGuid());
                 });
                 var source = entity.Sources.Last();
-                source.WriteData(rows);
+
+                var data = source.GetData();
+                data.AddRange(rows);
+                source.WriteData(data);
             }
 
         }

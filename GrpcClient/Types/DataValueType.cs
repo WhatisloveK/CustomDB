@@ -1,4 +1,4 @@
-﻿using DB_Engine.Exceptions;
+﻿
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace DB_Engine.Types
+namespace GrpcClient
 {
     public class DataValueType
     {
@@ -39,18 +39,17 @@ namespace DB_Engine.Types
             };
         }
 
-        public static Guid GetDataValueType(Type type)
+        public static Guid GetDataValueType(string type)
         {
             return type switch
             {
-                var t when t == typeof(int) => IntegerDataValueTypeId,
-                var t when t == typeof(double) => RealDataValueTypeId,
-                var t when t == typeof(char) => CharDataValueTypeId,
-                var t when t == typeof(string) => StringDataValueTypeId,
-                var t when t == typeof(ComplexInteger) => ComplexIntegerDataValueTypeId,
-                var t when t == typeof(ComplexReal) => ComplexRealDataValueTypeId,
-                var t when t == typeof(Guid) => UniqueidentifierDataValueTypeId,
-                _ => throw new DataValueTypeException($"Incorrect Type specified. TypeName = \"{type.Name}\""),
+                "int" => IntegerDataValueTypeId,
+                "double" => RealDataValueTypeId,
+                "char" => CharDataValueTypeId,
+                "string" => StringDataValueTypeId,
+                "cmplxInt" => ComplexIntegerDataValueTypeId,
+                "cmplxReal" => ComplexRealDataValueTypeId,
+                _ => throw new DataValueTypeException($"Incorrect Type specified. TypeName = \"{type}\""),
             };
         }
 
@@ -85,7 +84,6 @@ namespace DB_Engine.Types
         private static Dictionary<Guid, Func<string, object>> ParseStrigns =>
             new Dictionary<Guid, Func<string, object>>
             {
-                [UniqueidentifierDataValueTypeId] = new Func<string, object>(x => Guid.Parse(x)),
                 [CharDataValueTypeId] = new Func<string, object>(x => x.First()),
                 [IntegerDataValueTypeId] = new Func<string, object>(x => int.Parse(x)),
                 [RealDataValueTypeId] = new Func<string, object>(x => double.Parse(x)),

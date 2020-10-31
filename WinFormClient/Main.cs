@@ -78,7 +78,7 @@ namespace WinFormClient
                     string value = dataGridView.SelectedRows[i].Cells[j].Value?.ToString();
                     try
                     {
-                        row.Add(DataValueType.GetTypedValue(entityService.Entity.Schema.Columns[j - 1].DataValueType, value));
+                        row.Add(DataValueType.GetTypedValue(entityService.Entity.Schema.Columns[j].DataValueType, value));
                     }
                     catch
                     {
@@ -144,15 +144,6 @@ namespace WinFormClient
                 }
                 menuStripTop.Items.Add(outItem);
             }
-        }
-
-        private void SetContextMenuToDataGrid()
-        {
-            var contextMenuStrip = new ContextMenuStrip();
-            var updateItem = new ToolStripMenuItem("Create table");
-            //updateItem.Click += UpdateItem_Click;
-            //contextMenuStrip.Items.Add(updateItem);
-            //dataGridView1.ContextMenuStrip = contextMenuStrip;
         }
 
         
