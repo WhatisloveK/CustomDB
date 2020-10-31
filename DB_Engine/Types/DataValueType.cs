@@ -26,48 +26,32 @@ namespace DB_Engine.Types
 
         public static Type GetType(Guid dataValueTypeId)
         {
-            switch (dataValueTypeId)
+            return dataValueTypeId switch
             {
-                case var t when t == IntegerDataValueTypeId:
-                    return typeof(int);
-                case var t when t == RealDataValueTypeId:
-                    return typeof(double);
-                case var t when t == CharDataValueTypeId:
-                    return typeof(char);
-                case var t when t == StringDataValueTypeId:
-                    return typeof(string);
-                case var t when t == ComplexIntegerDataValueTypeId:
-                    return typeof(ComplexInteger);
-                case var t when t == ComplexRealDataValueTypeId:
-                    return typeof(ComplexReal);
-                case var t when t == UniqueidentifierDataValueTypeId:
-                    return typeof(Guid);
-                default:
-                    throw new DataValueTypeException($"Incorrect DataValueTypeId specified. IncorrectDataValueTypeId = \"{dataValueTypeId}\"");
-            }
+                var t when t == IntegerDataValueTypeId => typeof(int),
+                var t when t == RealDataValueTypeId => typeof(double),
+                var t when t == CharDataValueTypeId => typeof(char),
+                var t when t == StringDataValueTypeId => typeof(string),
+                var t when t == ComplexIntegerDataValueTypeId => typeof(ComplexInteger),
+                var t when t == ComplexRealDataValueTypeId => typeof(ComplexReal),
+                var t when t == UniqueidentifierDataValueTypeId => typeof(Guid),
+                _ => throw new DataValueTypeException($"Incorrect DataValueTypeId specified. IncorrectDataValueTypeId = \"{dataValueTypeId}\""),
+            };
         }
 
         public static Guid GetDataValueType(Type type)
         {
-            switch (type)
+            return type switch
             {
-                case var t when t == typeof(int):
-                    return IntegerDataValueTypeId;
-                case var t when t == typeof(double):
-                    return RealDataValueTypeId;
-                case var t when t == typeof(char):
-                    return CharDataValueTypeId;
-                case var t when t == typeof(string):
-                    return StringDataValueTypeId;
-                case var t when t == typeof(ComplexInteger):
-                    return ComplexIntegerDataValueTypeId;
-                case var t when t == typeof(ComplexReal):
-                    return ComplexRealDataValueTypeId;
-                case var t when t == typeof(Guid):
-                    return UniqueidentifierDataValueTypeId;
-                default:
-                    throw new DataValueTypeException($"Incorrect Type specified. TypeName = \"{type.Name}\"");
-            }
+                var t when t == typeof(int) => IntegerDataValueTypeId,
+                var t when t == typeof(double) => RealDataValueTypeId,
+                var t when t == typeof(char) => CharDataValueTypeId,
+                var t when t == typeof(string) => StringDataValueTypeId,
+                var t when t == typeof(ComplexInteger) => ComplexIntegerDataValueTypeId,
+                var t when t == typeof(ComplexReal) => ComplexRealDataValueTypeId,
+                var t when t == typeof(Guid) => UniqueidentifierDataValueTypeId,
+                _ => throw new DataValueTypeException($"Incorrect Type specified. TypeName = \"{type.Name}\""),
+            };
         }
 
 
@@ -90,7 +74,7 @@ namespace DB_Engine.Types
         {
             try
             {
-                return _parseStrigns[dataValueType](value);
+                return ParseStrigns[dataValueType](value);
             }
             catch (Exception ex)
             {
@@ -98,9 +82,10 @@ namespace DB_Engine.Types
             }
         }
 
-        private static Dictionary<Guid, Func<string, object>> _parseStrigns =>
+        private static Dictionary<Guid, Func<string, object>> ParseStrigns =>
             new Dictionary<Guid, Func<string, object>>
             {
+                [UniqueidentifierDataValueTypeId] = new Func<string, object>(x => Guid.Parse(x)),
                 [CharDataValueTypeId] = new Func<string, object>(x => x.First()),
                 [IntegerDataValueTypeId] = new Func<string, object>(x => int.Parse(x)),
                 [RealDataValueTypeId] = new Func<string, object>(x => double.Parse(x)),

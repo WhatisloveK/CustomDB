@@ -202,7 +202,7 @@ namespace GrpcServer.Services
                 Console.WriteLine();
                 Console.WriteLine();
                 Console.WriteLine("***************************************************************************************************************");
-                Console.WriteLine("Inner join: " + request.FirstColumnName+ ", " + request.SecondColumnName);
+                Console.WriteLine($"Inner join: {request.FirstTableName}->{request.FirstColumnName}, {request.SecondTableName}->{request.SecondColumnName}");
                 Console.WriteLine("***************************************************************************************************************");
 
                 return Task.FromResult(response);
@@ -258,28 +258,7 @@ namespace GrpcServer.Services
                 IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 var _columns = entityService.Entity.Schema.Columns;
-                var values = new List<List<object>>();
-
-                for (int i = 0; i < request.Rows.Count; i++)
-                {
-                    var row = new List<object>();
-
-                    for (var j = 0; j < request.Rows[0].Items.Count; j++)
-                    {
-
-                        string value = request.Rows[i].Items[j];
-                        try
-                        {
-                            row.Add(DataValueType.GetTypedValue(_columns[j + 1].DataValueType, value));
-                        }
-                        catch
-                        {
-
-                            throw new DataValueTypeException(string.Format("In row number {0} in column {1} value \"{2}\" has incorrect type!", i + 1, j + 1, value));
-                        }
-                    }
-                    values.Add(row);
-                }
+                var values = GetTypedRows(_columns, request.Rows);
                 entityService.InsertRange(values);
 
                 Console.WriteLine();
@@ -296,5 +275,78 @@ namespace GrpcServer.Services
             }
         }
 
+        public override Task<BaseReply> Update(UpdateRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var response = new BaseReply()
+                {
+                    Code = 200
+                };
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
+                IEntityService entityService = databaseService.GetEntityService(request.TableName);
+
+                var conditions = new Dictionary<string, List<IValidator>>();
+                if (request.Conditions.Count > 0)
+                {
+                    foreach (var item in request.Conditions)
+                    {
+                        var validators = new List<IValidator>();
+                        foreach (var condition in item.Value)
+                        {
+                            validators.Add(CreateValidator(condition));
+                        }
+                        conditions.Add(item.Key, validators);
+                    }
+                }
+                var _columns = entityService.Entity.Schema.Columns;
+
+                var values = GetTypedRows(_columns, request.Rows, true);
+                entityService.Update(values);
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine("Rows inserted: " + request.TableName + ", " + request.Rows.Count);
+                Console.WriteLine("***************************************************************************************************************");
+
+                return Task.FromResult(response);
+            }
+            catch (Exception ex)
+            {
+                return Task.FromResult(new BaseReply() { Code = 400, Message = ex.Message, StackTrace = ex.StackTrace });
+            }
+        }
+
+        private List<List<object>> GetTypedRows(List<EntityColumn> columns, RepeatedField<Row> rows, bool isUpdate = false)
+        {
+            var values = new List<List<object>>();
+
+            for (int i = 0; i < rows.Count; i++)
+            {
+                var row = new List<object>();
+
+                for (var j = 0; j < rows[0].Items.Count; j++)
+                {
+
+                    string value = rows[i].Items[j];
+                    try
+                    {
+                        if (isUpdate)
+                            row.Add(DataValueType.GetTypedValue(columns[j].DataValueType, value));
+                        else
+                            row.Add(DataValueType.GetTypedValue(columns[j + 1].DataValueType, value));
+                    }
+                    catch
+                    {
+
+                        throw new DataValueTypeException(string.Format("In row number {0} in column {1} value \"{2}\" has incorrect type!", i + 1, j + 1, value));
+                    }
+                }
+                values.Add(row);
+            }
+
+            return values;
+        }
     }
 }

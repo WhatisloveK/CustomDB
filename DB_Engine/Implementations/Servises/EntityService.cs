@@ -16,7 +16,7 @@ namespace DB_Engine.Implementations.Servises
     {
         public Entity Entity { get;  set; }
 
-        private IStorage _storage;
+        private readonly IStorage _storage;
 
         public string Name => Entity.Name;
 
