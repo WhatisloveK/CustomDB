@@ -4,10 +4,7 @@ option csharp_namespace = "GrpcClient";
 
 package dbEngine;
 
-// The greeting service definition.
 service DBService {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply);
   rpc CreateDatabase (CreateDbRequest) returns (BaseReply);
   rpc CreateTable (TableRequest) returns (BaseReply);
   rpc DeleteTable (TableRequest) returns (BaseReply);
@@ -121,10 +118,6 @@ message SelectReply {
 	repeated Row rows = 4;
 }
 
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
-}
 
 message CreateDbRequest {
 	string name = 1;
@@ -154,7 +147,3 @@ message BaseReply {
 	string stackTrace = 3;
 }
 
-// The response message containing the greetings.
-message HelloReply {
-  string message = 1;
-}

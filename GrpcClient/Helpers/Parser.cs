@@ -19,7 +19,8 @@ namespace GrpcClient
             { "insert", new List<string>{ "-d",  "-t", "-r"} },
             { "select", new List<string>{ "-d",  "-t", "-sh"} },
             { "update", new List<string>{ "-d",  "-t", "-r"} },
-            { "inner-join", new List<string>{ "-d",  "-t", "-t2","-c","-c2", "-sh" } }
+            { "inner-join", new List<string>{ "-d",  "-t", "-t2","-c","-c2", "-sh" } },
+            { "cross-join", new List<string>{ "-d",  "-t", "-t2", "-sh" } }
         };
 
         private ComparsonType GetComparson(string comparsonString)
@@ -103,7 +104,7 @@ namespace GrpcClient
                     await tableService.AddColumn(parametersDictionary["-d"], parametersDictionary["-t"], parametersDictionary["-cn"], DataValueType.GetDataValueType(parametersDictionary["-ct"]).ToString(), null);
                     break;
                 case "add-clmn-wth-vldtr":
-                {
+                    {
                         var validators = new List<Validator>();
                         validators.Add(new Validator
                         {
@@ -112,33 +113,40 @@ namespace GrpcClient
                             ComparsonType = GetComparson(parametersDictionary["-cmprt"])
                         });
                         await tableService.AddColumn(parametersDictionary["-d"], parametersDictionary["-t"], parametersDictionary["-cn"], validators[0].DataValueTypeId, validators);
-                    break;
-                }
+                        break;
+                    }
                 case "insert":
-                { 
-                    var list = new List<Row>();
-                    Row row = new Row();
-                    row.Items.Add(parametersDictionary["-r"].Split(","));
-                    list.Add(row);
-                    await tableService.Insert(parametersDictionary["-d"], parametersDictionary["-t"], list);
-                    break;
-                }
+                    {
+                        var list = new List<Row>();
+                        Row row = new Row();
+                        row.Items.Add(parametersDictionary["-r"].Split(","));
+                        list.Add(row);
+                        await tableService.Insert(parametersDictionary["-d"], parametersDictionary["-t"], list);
+                        break;
+                    }
                 case "select":
-                    await tableService.Select(parametersDictionary["-d"], parametersDictionary["-t"],  bool.Parse(parametersDictionary["-sh"]));
+                    await tableService.Select(parametersDictionary["-d"], parametersDictionary["-t"], bool.Parse(parametersDictionary["-sh"]));
                     break;
                 case "update":
-                {
-                    var list = new List<Row>();
-                    Row row = new Row();
-                    row.Items.Add(parametersDictionary["-r"].Split(","));
-                    list.Add(row);
-                    await tableService.Update(parametersDictionary["-d"], parametersDictionary["-t"], list);
-                    break;
-                }
+                    {
+                        var list = new List<Row>();
+                        Row row = new Row();
+                        row.Items.Add(parametersDictionary["-r"].Split(","));
+                        list.Add(row);
+                        await tableService.Update(parametersDictionary["-d"], parametersDictionary["-t"], list);
+                        break;
+                    }
                 case "inner-join":
-                    await tableService.InnerJoin(parametersDictionary["-d"], parametersDictionary["-t"], parametersDictionary["-t2"], parametersDictionary["-c"], parametersDictionary["-c2"]);
+                    await tableService.InnerJoin(parametersDictionary["-d"], parametersDictionary["-t"], parametersDictionary["-t2"], parametersDictionary["-c"], parametersDictionary["-c2"], bool.Parse(parametersDictionary["-sh"]));
+                    break;
+                case "cross-join":
+                    await tableService.CrossJoin(parametersDictionary["-d"], parametersDictionary["-t"], parametersDictionary["-t2"], bool.Parse(parametersDictionary["-sh"]));
                     break;
                 case "delete-tbl":
+                    await databaseService.DeleteTable(parametersDictionary["-d"], parametersDictionary["-t"]);
+                    break;
+                default:
+                    Console.WriteLine("Incorrect command");
                     break;
             }
 

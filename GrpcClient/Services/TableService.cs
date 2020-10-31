@@ -5,6 +5,8 @@ using Grpc.Net.Client;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Diagnostics;
+using System.Linq;
+using System.ComponentModel;
 
 namespace GrpcClient
 {
@@ -53,7 +55,7 @@ namespace GrpcClient
             }
             else
             {
-                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: \n" + reply.StackTrace);
             }
             
         }
@@ -73,7 +75,7 @@ namespace GrpcClient
             }
             else
             {
-                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: \n" + reply.StackTrace);
             }
         }
 
@@ -94,7 +96,7 @@ namespace GrpcClient
             }
             else
             {
-                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: \n" + reply.StackTrace);
             }
         }
 
@@ -116,7 +118,7 @@ namespace GrpcClient
             }
             else
             {
-                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: \n" + reply.StackTrace);
             }
         }
 
@@ -133,11 +135,14 @@ namespace GrpcClient
 
             if (reply.Code == 200)
             {
-                WriteToConsole(reply.Rows.ToString());
+                for(int i = 0;i < reply.Rows.Count; i++)
+                {
+                    Console.WriteLine($"Row #{i+1} | " + reply.Rows[i].Items.Aggregate((x, y) => $"{x}, {y}"));
+                }
             }
             else
             {
-                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: \n" + reply.StackTrace);
             }
         }
 
@@ -157,11 +162,11 @@ namespace GrpcClient
             }
             else
             {
-                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: \n" + reply.StackTrace);
             }
         }
 
-        public async Task InnerJoin(string dbname, string tableName, string tableName2, string column, string column2)
+        public async Task InnerJoin(string dbname, string tableName, string tableName2, string column, string column2, bool showSystemColumns)
         {
             var request = new InnerJoinRequest
             {
@@ -169,17 +174,45 @@ namespace GrpcClient
                 FirstTableName = tableName,
                 SecondTableName = tableName2,
                 FirstColumnName = column,
-                SecondColumnName = column2
+                SecondColumnName = column2,
+                ShowSysColumns = showSystemColumns
             };
 
             var reply = await client.InnerJoinAsync(request);
             if (reply.Code == 200)
             {
-                WriteToConsole(reply.Rows.ToString());
+                for (int i = 0; i < reply.Rows.Count; i++)
+                {
+                    Console.WriteLine($"Row #{i + 1} | " + reply.Rows[i].Items.Aggregate((x, y) => $"{x}, {y}"));
+                }
             }
             else
             {
-                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: " + reply.StackTrace);
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: \n" + reply.StackTrace);
+            }
+        }
+
+        public async Task CrossJoin(string dbname, string tableName, string tableName2, bool showSystemColumns)
+        {
+            var request = new CrossJoinRequest
+            {
+                DbName = dbname,
+                FirstTableName = tableName,
+                SecondTableName = tableName2,
+                ShowSysColumns = showSystemColumns
+            };
+
+            var reply = await client.CrossJoinAsync(request);
+            if (reply.Code == 200)
+            {
+                for (int i = 0; i < reply.Rows.Count; i++)
+                {
+                    Console.WriteLine($"Row #{i + 1} | " + reply.Rows[i].Items.Aggregate((x, y) => $"{x}, {y}"));
+                }
+            }
+            else
+            {
+                WriteToConsole("One or more errors ocured. Message: " + reply.Message + "\nStackTrace: \n" + reply.StackTrace);
             }
         }
     }
