@@ -21,8 +21,9 @@ export class AppComponent implements OnInit{
   @ViewChild(MatTableComponent) tableComponent:MatTableComponent;
 
   ngOnInit(): void {
-    this.tables = ["test1", "test2"];
-   
+    this.tables = [];
+    this.tableName="";
+    this.dbName="";
   }
 
   selectTable(table:string){
