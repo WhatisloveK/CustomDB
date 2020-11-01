@@ -28,12 +28,13 @@ export class AppComponent implements OnInit{
 
   selectTable(table:string){
     this.tableName = table;
+    this.tableComponent.tableName = table;
     this.tableComponent.ngOnInit();
   }
 
   connectToDb(value){
     this.dbName = value;
-
+    this.tableComponent.dbName = value;
     var tablesRequest = new GetTableListRequest();
     tablesRequest.setDbname(this.dbName);
     grpc.unary(DBService.GetTableList, {
