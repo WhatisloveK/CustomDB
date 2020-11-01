@@ -33,19 +33,19 @@ export class AppComponent implements OnInit{
   connectToDb(value){
     this.dbName = value;
 
-    // var tablesRequest = new GetTableListRequest();
-    // tablesRequest.setDbname(this.dbName);
-    // grpc.unary(DBService.GetTableList, {
-    //   request: tablesRequest,
-    //   host: environment.host, 
-    //   onEnd: res => {
-    //     const { status, message } = res;
-    //     if (status === grpc.Code.OK && message) {
-    //       var result = message.toObject() as GetTableListReply.AsObject;
-    //       this.tables = result.tablesList;
-    //     }
-    //   }
-    // });
-    //this.tableComponent.clearGrid();
+    var tablesRequest = new GetTableListRequest();
+    tablesRequest.setDbname(this.dbName);
+    grpc.unary(DBService.GetTableList, {
+      request: tablesRequest,
+      host: environment.host, 
+      onEnd: res => {
+        const { status, message } = res;
+        if (status === grpc.Code.OK && message) {
+          var result = message.toObject() as GetTableListReply.AsObject;
+          this.tables = result.tablesList;
+        }
+      }
+    });
+    this.tableComponent.clearGrid();
   }
 }
