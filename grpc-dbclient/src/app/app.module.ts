@@ -10,6 +10,7 @@ import { MatTableComponent } from './mat-table/mat-table.component';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { HelperService } from './services/helper.service';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatPaginatorModule,
     MatFormFieldModule
   ],
-  providers: [],
+  providers: [
+    HelperService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
