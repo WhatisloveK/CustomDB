@@ -18,7 +18,7 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <ng-container *ngFor="let table of tables">
-            <a class="dropdown-item" href="#" (click)="selectTable(table)">{{table}}</a>
+            <span class="dropdown-item" (click)="selectTable(table)">{{table}}</span>
           </ng-container>
         </div>
       </li>
@@ -28,7 +28,7 @@
     </ul>
     <form class="form-inline my-2 my-lg-0">
       <input class="form-control mr-sm-2" type="search" placeholder="db name" aria-label="Search" #dbNameInput>
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" (click)="connectToDb(dbNameInput.value)">Connect</button>
+      <button class="btn btn-outline-success my-2 my-sm-0" (click)="connectToDb(dbNameInput.value)">Connect</button>
     </form>
   </div>
 </nav>
