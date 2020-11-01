@@ -10,8 +10,9 @@ import { MatTableComponent } from './mat-table/mat-table.component';
 import { MatSortModule } from '@angular/material/sort';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { HelperService } from './services/helper.service';
+import { HelperService } from './shared/services/helper.service';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import { OperationsService } from './shared/services/operations.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
     MatSnackBarModule
   ],
   providers: [
-    HelperService
+    HelperService,
+    OperationsService
   ],
   bootstrap: [AppComponent]
 })

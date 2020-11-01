@@ -6,6 +6,8 @@ import { MatTableComponent } from './mat-table/mat-table.component';
 import { environment } from 'src/environments/environment';
 
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { OperationsService } from './shared/services/operations.service';
+import { EntityCollection } from './shared/models/entityCollection';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class AppComponent implements OnInit{
 
-  constructor(private _snackBar: MatSnackBar) { }
+  constructor(private _snackBar: MatSnackBar,private _operationService: OperationsService) { }
   
   title = 'dynamic-mat-table';
 
@@ -32,13 +34,16 @@ export class AppComponent implements OnInit{
 
   selectTable(table:string){
     this.tableName = table;
-    this.tableComponent.tableName = table;
-    this.tableComponent.ngOnInit();
+    this._operationService.select(this.dbName,table).subscribe((data: EntityCollection)=>{
+      this.tableComponent.tableCols = data.columnNames;
+      this.tableComponent.tableData = data.data;
+      this.tableComponent.ngOnInit();
+    })
+    
   }
 
   connectToDb(value){
     this.dbName = value;
-    this.tableComponent.dbName = value;
     var tablesRequest = new GetTableListRequest();
     tablesRequest.setDbname(this.dbName);
     grpc.unary(DBService.GetTableList, {
@@ -49,8 +54,8 @@ export class AppComponent implements OnInit{
         if (status === grpc.Code.OK && message) {
           var result = message.toObject() as GetTableListReply.AsObject;
           this.tables = result.tablesList;
-          this.openSnackBar(true, "You have successfully connected to database!");
-        }
+          this.openSnackBar(true, "You have been successfully connected to database!");
+        } 
       }
     });
     this.tableComponent.clearGrid();
