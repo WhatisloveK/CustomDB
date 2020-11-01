@@ -5,12 +5,16 @@ import {SelectRequest,SelectReply, GetTableListReply, GetTableListRequest} from 
 import { MatTableComponent } from './mat-table/mat-table.component';
 import { environment } from 'src/environments/environment';
 
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit{
+
+  constructor(private _snackBar: MatSnackBar) { }
   
   title = 'dynamic-mat-table';
 
@@ -45,9 +49,21 @@ export class AppComponent implements OnInit{
         if (status === grpc.Code.OK && message) {
           var result = message.toObject() as GetTableListReply.AsObject;
           this.tables = result.tablesList;
+          this.openSnackBar(true, "You have successfully connected to database!");
         }
       }
     });
     this.tableComponent.clearGrid();
+  }
+
+  openSnackBar(success: boolean, message: string) {
+    let action = "Ok";
+    if(success){
+      message = message;
+      action = "Great"
+    }
+    this._snackBar.open(message, action, {
+      duration: 10000,
+    });
   }
 }
