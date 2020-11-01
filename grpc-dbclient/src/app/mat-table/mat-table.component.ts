@@ -69,4 +69,9 @@ export class MatTableComponent implements OnInit {
     const searchTarget = ev.target.value;
     this.tableDataSrc.filter = searchTarget.trim().toLowerCase();
   }
+
+  clearGrid(){
+    this.tableCols = [];
+    this.tableData = [];
+  }
 }
