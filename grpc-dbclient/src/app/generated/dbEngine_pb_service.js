@@ -1,7 +1,7 @@
 // package: dbEngine
 // file: src/app/protos/dbEngine.proto
 
-var src_app_protos_dbEngine_pb = require("../generated/dbEngine_pb");
+var src_app_protos_dbEngine_pb = require("./dbEngine_pb");
 var grpc = require("@improbable-eng/grpc-web").grpc;
 
 var DBService = (function () {
@@ -185,6 +185,15 @@ var EntityService = (function () {
   return EntityService;
 }());
 
+EntityService.GetEntity = {
+  methodName: "GetEntity",
+  service: EntityService,
+  requestStream: false,
+  responseStream: false,
+  requestType: src_app_protos_dbEngine_pb.GetEntityRequest,
+  responseType: src_app_protos_dbEngine_pb.GetEntityReply
+};
+
 EntityService.AddColumn = {
   methodName: "AddColumn",
   service: EntityService,
@@ -263,6 +272,37 @@ function EntityServiceClient(serviceHost, options) {
   this.serviceHost = serviceHost;
   this.options = options || {};
 }
+
+EntityServiceClient.prototype.getEntity = function getEntity(requestMessage, metadata, callback) {
+  if (arguments.length === 2) {
+    callback = arguments[1];
+  }
+  var client = grpc.unary(EntityService.GetEntity, {
+    request: requestMessage,
+    host: this.serviceHost,
+    metadata: metadata,
+    transport: this.options.transport,
+    debug: this.options.debug,
+    onEnd: function (response) {
+      if (callback) {
+        if (response.status !== grpc.Code.OK) {
+          var err = new Error(response.statusMessage);
+          err.code = response.status;
+          err.metadata = response.trailers;
+          callback(err, null);
+        } else {
+          callback(null, response.message);
+        }
+      }
+    }
+  });
+  return {
+    cancel: function () {
+      callback = null;
+      client.close();
+    }
+  };
+};
 
 EntityServiceClient.prototype.addColumn = function addColumn(requestMessage, metadata, callback) {
   if (arguments.length === 2) {

@@ -1,7 +1,7 @@
 // package: dbEngine
 // file: src/app/protos/dbEngine.proto
 
-import * as src_app_protos_dbEngine_pb from "../generated/dbEngine_pb";
+import * as src_app_protos_dbEngine_pb from "./dbEngine_pb";
 import {grpc} from "@improbable-eng/grpc-web";
 
 type DBServiceCreateDatabase = {
@@ -47,6 +47,15 @@ export class DBService {
   static readonly DeleteTable: DBServiceDeleteTable;
   static readonly GetTableList: DBServiceGetTableList;
 }
+
+type EntityServiceGetEntity = {
+  readonly methodName: string;
+  readonly service: typeof EntityService;
+  readonly requestStream: false;
+  readonly responseStream: false;
+  readonly requestType: typeof src_app_protos_dbEngine_pb.GetEntityRequest;
+  readonly responseType: typeof src_app_protos_dbEngine_pb.GetEntityReply;
+};
 
 type EntityServiceAddColumn = {
   readonly methodName: string;
@@ -122,6 +131,7 @@ type EntityServiceCrossJoin = {
 
 export class EntityService {
   static readonly serviceName: string;
+  static readonly GetEntity: EntityServiceGetEntity;
   static readonly AddColumn: EntityServiceAddColumn;
   static readonly DropColumn: EntityServiceDropColumn;
   static readonly Insert: EntityServiceInsert;
@@ -206,6 +216,15 @@ export class EntityServiceClient {
   readonly serviceHost: string;
 
   constructor(serviceHost: string, options?: grpc.RpcOptions);
+  getEntity(
+    requestMessage: src_app_protos_dbEngine_pb.GetEntityRequest,
+    metadata: grpc.Metadata,
+    callback: (error: ServiceError|null, responseMessage: src_app_protos_dbEngine_pb.GetEntityReply|null) => void
+  ): UnaryResponse;
+  getEntity(
+    requestMessage: src_app_protos_dbEngine_pb.GetEntityRequest,
+    callback: (error: ServiceError|null, responseMessage: src_app_protos_dbEngine_pb.GetEntityReply|null) => void
+  ): UnaryResponse;
   addColumn(
     requestMessage: src_app_protos_dbEngine_pb.AddColumnRequest,
     metadata: grpc.Metadata,

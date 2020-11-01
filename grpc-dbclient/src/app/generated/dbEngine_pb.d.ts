@@ -3,6 +3,88 @@
 
 import * as jspb from "google-protobuf";
 
+export class GetEntityRequest extends jspb.Message {
+  getDbname(): string;
+  setDbname(value: string): void;
+
+  getTablename(): string;
+  setTablename(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetEntityRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetEntityRequest): GetEntityRequest.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetEntityRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetEntityRequest;
+  static deserializeBinaryFromReader(message: GetEntityRequest, reader: jspb.BinaryReader): GetEntityRequest;
+}
+
+export namespace GetEntityRequest {
+  export type AsObject = {
+    dbname: string,
+    tablename: string,
+  }
+}
+
+export class Column extends jspb.Message {
+  getName(): string;
+  setName(value: string): void;
+
+  getDatavaluetypeid(): string;
+  setDatavaluetypeid(value: string): void;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Column.AsObject;
+  static toObject(includeInstance: boolean, msg: Column): Column.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: Column, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Column;
+  static deserializeBinaryFromReader(message: Column, reader: jspb.BinaryReader): Column;
+}
+
+export namespace Column {
+  export type AsObject = {
+    name: string,
+    datavaluetypeid: string,
+  }
+}
+
+export class GetEntityReply extends jspb.Message {
+  getCode(): number;
+  setCode(value: number): void;
+
+  getMessage(): string;
+  setMessage(value: string): void;
+
+  getStacktrace(): string;
+  setStacktrace(value: string): void;
+
+  clearColumnsList(): void;
+  getColumnsList(): Array<Column>;
+  setColumnsList(value: Array<Column>): void;
+  addColumns(value?: Column, index?: number): Column;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetEntityReply.AsObject;
+  static toObject(includeInstance: boolean, msg: GetEntityReply): GetEntityReply.AsObject;
+  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+  static serializeBinaryToWriter(message: GetEntityReply, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetEntityReply;
+  static deserializeBinaryFromReader(message: GetEntityReply, reader: jspb.BinaryReader): GetEntityReply;
+}
+
+export namespace GetEntityReply {
+  export type AsObject = {
+    code: number,
+    message: string,
+    stacktrace: string,
+    columnsList: Array<Column.AsObject>,
+  }
+}
+
 export class Validator extends jspb.Message {
   getValue(): string;
   setValue(value: string): void;

@@ -178,6 +178,40 @@ namespace GrpcServer.Services
             }
         }
 
+        public override Task<GetEntityReply> GetEntity(GetEntityRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var response = new GetEntityReply()
+                {
+                    Code = 200
+                };
+                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
+                IEntityService entityService = databaseService.GetEntityService(request.TableName);
+                foreach(var column in entityService.Entity.Schema.Columns)
+                {
+                    response.Columns.Add(new Column()
+                    {
+                        DataValueTypeId = column.DataValueType.ToString(),
+                        Name = column.Name
+                    });
+                }
+
+
+                Console.WriteLine();
+                Console.WriteLine();
+                Console.WriteLine("***************************************************************************************************************");
+                Console.WriteLine($"GetEntity {request.DbName}->{request.TableName}");
+                Console.WriteLine("***************************************************************************************************************");
+
+                return Task.FromResult(response);
+            }
+            catch (Exception ex)
+            {
+                 return Task.FromResult(new GetEntityReply() { Code = 400, Message = ex.Message, StackTrace = ex.StackTrace });
+            }
+        }
+
 
         public override Task<SelectReply> InnerJoin(InnerJoinRequest request, ServerCallContext context)
         {
