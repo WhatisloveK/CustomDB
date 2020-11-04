@@ -262,11 +262,11 @@ namespace GrpcServer.Services
                 var resultRows = new RepeatedField<Row>();
                 data = entityService.CrossJoin(entityService2.Entity, request.ShowSysColumns);
 
-                Parallel.ForEach(data, (row) => {
+                foreach(var row in data) {
                     var resultRow = new Row();
                     resultRow.Items.AddRange(row.Select(x => x.ToString()));
                     response.Rows.Add(resultRow);
-                });
+                }
 
                 Console.WriteLine();
                 Console.WriteLine();
