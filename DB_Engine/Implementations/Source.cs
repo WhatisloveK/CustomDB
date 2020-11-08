@@ -1,4 +1,5 @@
 ﻿using DB_Engine.Interfaces;
+using DB_Engine.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -57,6 +58,16 @@ namespace DB_Engine.Implementations
                     await JsonSerializer.SerializeAsync(streamData, data);
                 }
             }
+        }
+
+        public void SetUrl(DataBase db, Entity table)
+        {
+            Url = $"{db.Info.RootPath}\\{table.Name}{table.Sources.Count + 1}{GlobalSetting.Extention}";
+            Create();
+        }
+        protected void Create()
+        {
+            using (File.Create(Url)) { }
         }
     }
 }

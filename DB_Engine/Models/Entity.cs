@@ -13,7 +13,8 @@ namespace DB_Engine.Models
         public string Name { get; set; }
 
         [JsonPropertyName("sources")]
-        public List<Source> Sources { get; set; }
+        [JsonConverter(typeof(SourceListConverter))]
+        public List<ISource> Sources { get; set; }
 
         [JsonPropertyName("entitySchema")]
         public EntitySchema Schema { get; set; }
@@ -23,7 +24,7 @@ namespace DB_Engine.Models
 
         public Entity()
         {
-            Sources = new List<Source>();
+            Sources = new List<ISource>();
             Items = new List<List<object>>();
             Schema = new EntitySchema();
         }
