@@ -154,12 +154,18 @@ namespace WinFormClient
                 {
                     (Constants.MainForm.Open, new Action<object, EventArgs>((o, f) =>
                     {
-                        DialogResult result = openFileDialog.ShowDialog();
-                        if (result == DialogResult.OK)
-                        {
-                           string file = openFileDialog.FileName;
+                        //DialogResult result = openFileDialog.ShowDialog();
+                        //if (result == DialogResult.OK)
+                        //{
+                        //   string file = openFileDialog.FileName;
 
-                            _formManager.OpenDb(file);
+                        //    _formManager.OpenDb(file);
+                        //}
+                        var form = new InputForm("Enter db name");
+                        form.ShowDialog();
+                        if (form.IsSet)
+                        {
+                            _formManager.OpenDb(form.Value);
                         }
                     })),
                     (Constants.MainForm.CreateDB, new Action<object, EventArgs>((o, f) =>
