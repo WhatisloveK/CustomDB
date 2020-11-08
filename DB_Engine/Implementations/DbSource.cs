@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace DB_Engine.Implementations
 {
-    public class SqlSource : ISource
+    public class DbSource : ISource
     {
         public string Url { get; set; }
 
-        public string Type => typeof(SqlSource).AssemblyQualifiedName;
+        public string Type => typeof(DbSource).AssemblyQualifiedName;
 
         public long SizeInBytes => default;
 
@@ -26,7 +26,7 @@ namespace DB_Engine.Implementations
                 if (_dbProvider == null)
                 {
                     var data = Url.Split(GlobalSetting.Delimeter);
-                    _dbProvider = DbProviderFactory.GetSqlServcerClient(data[0], data[1], data[2]);
+                    _dbProvider = DbProviderFactory.GetMongoClient(data[0], data[1], data[2]);
                 }
 
                 return _dbProvider;

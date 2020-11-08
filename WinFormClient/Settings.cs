@@ -13,6 +13,6 @@ namespace WinFormClient
         public static int SubButtonHeght  = 25;
         public static int TopMenuButtonWidth = 100;
 
-        public static string SqlServerName = "DESKTOP-2UQRN34\\SQLEXPRESS";
+        public static string SqlServerName = "mongodb://localhost:27017";
     }
 }

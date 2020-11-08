@@ -9,7 +9,7 @@ namespace DB_Engine.Factories
     {
         public static ISource GetSourceObject(DataBase db, Entity entity)
         {
-            var sourceInstance = new SqlSource();
+            var sourceInstance = new DbSource();
             sourceInstance.SetUrl(db, entity);
 
             return sourceInstance;
@@ -25,7 +25,7 @@ namespace DB_Engine.Factories
             get
             {
                 if (_dbWriter == null)
-                    _dbWriter = new SqlServerDbWriter();
+                    _dbWriter = new MongoDbWriter();
                 return _dbWriter;
             }
             set
