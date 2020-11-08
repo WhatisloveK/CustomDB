@@ -62,6 +62,11 @@
             this.menuStripTop.TabIndex = 2;
             this.menuStripTop.Text = "menuStripTop";
             // 
+            // openFileDialog
+            // 
+            this.openFileDialog.FileName = "DbFile";
+            this.openFileDialog.Filter = "DataBase file|*.vldb";
+            // 
             // flowLayoutPanelTopMenu
             // 
             this.flowLayoutPanelTopMenu.Location = new System.Drawing.Point(256, 27);
