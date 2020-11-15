@@ -227,7 +227,7 @@ namespace WinFormClient
             var rowsCount = rows.Count();
             if (rowsCount < 1)
             {
-                MessageBox.Show(Constants.TableButtonControl.EmptyTable);
+               // MessageBox.Show(Constants.TableButtonControl.EmptyTable);
             }
             else
             {
