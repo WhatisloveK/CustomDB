@@ -30,6 +30,7 @@ namespace DB_Engine.DbProviders.Implementations
             set
             {
                 _dataBase = value;
+
             }
         }
 
@@ -38,7 +39,7 @@ namespace DB_Engine.DbProviders.Implementations
             _connectionString = connectionString;
             _dbName = dbName;
             _tableName = tableName;
-            _dbTableName = $"db_{_dbName}_name";
+            _dbTableName = $"sys_{_dbName}";
 
             _mongoClient = new MongoClient(_connectionString);
         }
@@ -47,6 +48,7 @@ namespace DB_Engine.DbProviders.Implementations
         {
             DataBase.DropCollection(_tableName);
             CreateTable();
+
         }
 
         public void CreateTable()
@@ -57,12 +59,15 @@ namespace DB_Engine.DbProviders.Implementations
             {
                 {DATA, new BsonArray() }
             });
+
         }
 
         public void DeleteTable()
         {
             DataBase.DropCollection(_tableName);
+
         }
+
 
         public List<string> GetData()
         {
@@ -71,6 +76,7 @@ namespace DB_Engine.DbProviders.Implementations
             var data = collection.Find(new BsonDocument()).First();
 
             return data.Data;
+
         }
 
         public async Task<List<string>> GetDataAsync()
@@ -79,6 +85,7 @@ namespace DB_Engine.DbProviders.Implementations
 
             var data = (await collection.FindAsync(new BsonDocument())).ToList();
             return data;
+
         }
 
         public string GetDb()
@@ -86,6 +93,7 @@ namespace DB_Engine.DbProviders.Implementations
             var collection = DataBase.GetCollection<DbDataBaseInfo>(_dbTableName);
             var data = collection.Find(new BsonDocument()).First();
             return data.Data;
+
         }
 
         public void InsertData(List<string> data)
@@ -93,6 +101,7 @@ namespace DB_Engine.DbProviders.Implementations
             var collection = DataBase.GetCollection<BsonDocument>(_tableName);
             var update = Builders<BsonDocument>.Update.PushEach(DATA, data);
             collection.UpdateMany(new BsonDocument(), update);
+
         }
 
         public async Task InsertDataAsync(List<string> data)
@@ -100,6 +109,7 @@ namespace DB_Engine.DbProviders.Implementations
             var collection = DataBase.GetCollection<BsonDocument>(_tableName);
             var update = Builders<BsonDocument>.Update.Push(DATA, data);
             await collection.UpdateManyAsync(default, update);
+
         }
 
         public void UpdateOrCreateDb(string stringDbData)
@@ -107,6 +117,7 @@ namespace DB_Engine.DbProviders.Implementations
             try
             {
                 DataBase.DropCollection(_dbTableName);
+
             }
             finally
             {
@@ -125,6 +136,7 @@ namespace DB_Engine.DbProviders.Implementations
             try
             {
                 _mongoClient.DropDatabase(_dbName);
+
             }
             catch { }
         }
@@ -132,17 +144,20 @@ namespace DB_Engine.DbProviders.Implementations
         public List<string> GetDbsNames()
         {
             return _mongoClient.ListDatabaseNames().ToList();
+
         }
 
         private class DbData
         {
             public object _id { get; set; }
+
             public List<string> Data { get; set; }
         }
 
         private class DbDataBaseInfo
         {
             public object _id { get; set; }
+
             public string Data { get; set; }
         }
     }

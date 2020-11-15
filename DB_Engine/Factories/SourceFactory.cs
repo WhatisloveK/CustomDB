@@ -10,6 +10,7 @@ namespace DB_Engine.Factories
         public static ISource GetSourceObject(DataBase db, Entity entity)
         {
             var sourceInstance = new DbSource();
+
             sourceInstance.SetUrl(db, entity);
 
             return sourceInstance;
@@ -18,12 +19,14 @@ namespace DB_Engine.Factories
         public static IDbWriter GetDbWriter()
         {
             return DbWriter;
+
         }
         static IDbWriter _dbWriter;
         static IDbWriter DbWriter
         {
             get
             {
+
                 if (_dbWriter == null)
                     _dbWriter = new MongoDbWriter();
                 return _dbWriter;

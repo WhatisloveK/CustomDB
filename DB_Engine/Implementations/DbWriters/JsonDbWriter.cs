@@ -14,6 +14,7 @@ namespace DB_Engine.Implementations.DbWriters
         public void DeleteDb(DataBase dataBase)
         {
             File.Delete($"{dataBase.Info.RootPath}\\{dataBase.Name}{GlobalSetting.Extention}");
+
         }
 
         public DataBase GetDb(string filePath)
@@ -22,16 +23,19 @@ namespace DB_Engine.Implementations.DbWriters
 
             var dataBase = JsonSerializer.Deserialize<DataBase>(data);
             return dataBase;
+
         }
 
         public List<string> GetDbsNames(string rootPath)
         {
+
             return Directory.GetFiles(rootPath, $"*{GlobalSetting.Extention}").ToList();
         }
 
         public void UpdateDb(DataBase dataBase)
         {
             var stringData = JsonSerializer.Serialize(dataBase);
+
 
             File.WriteAllText($"{dataBase.Info.RootPath}\\{dataBase.Name}{GlobalSetting.Extention}", stringData);
         }

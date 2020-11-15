@@ -23,6 +23,7 @@ namespace DB_Engine.Implementations
         public DataBase GetDataBaseFromFile(string filePath)
         {
             return SourceFactory.GetDbWriter().GetDb(filePath);
+
         }
 
         public void AddColoumn(Entity entity)

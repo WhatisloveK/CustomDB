@@ -13,11 +13,13 @@ namespace DB_Engine.Implementations
     {
         public override bool CanConvert(Type typeToConvert)
         {
+
             return typeToConvert == typeof(List<ISource>);
         }
 
         public override List<ISource> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
+
             var jsonObject = JsonDocument.ParseValue(ref reader);
 
             var array = JsonSerializer.Deserialize<JsonElement>(jsonObject.RootElement.GetString());
@@ -36,6 +38,7 @@ namespace DB_Engine.Implementations
 
         public override void Write(Utf8JsonWriter writer, List<ISource> value, JsonSerializerOptions options)
         {
+
             var dataString = JsonSerializer.Serialize(value);
             JsonEncodedText text = JsonEncodedText.Encode(dataString, JavaScriptEncoder.UnsafeRelaxedJsonEscaping);
 

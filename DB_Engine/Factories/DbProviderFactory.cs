@@ -11,11 +11,13 @@ namespace DB_Engine.Factories
         public static IDbProvider GetSqlServcerClient(string localhost, string db, string table = "")
         {
             return new SqlServerDbProvider(localhost, db, table);
+
         }
 
         public static IDbProvider GetMongoClient(string localhost, string db, string table = "")
         {
             return new MongoDbProvider(localhost, db, table);
+
         }
 
         //public static IDbClient GetJsonClient(string path)

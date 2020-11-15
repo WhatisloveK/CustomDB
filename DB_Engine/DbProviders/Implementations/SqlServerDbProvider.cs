@@ -24,17 +24,20 @@ namespace DB_Engine.DbProviders.Implementations
             _table = table;
 
             _tableNameForDbTable = $"sys_{_db}";
+
         }
 
         public SqlServerDbProvider(string server, string db)
-            : this(server, db, string.Empty) { }
+            : this(server, db, string.Empty) {  }
 
         private string _connectionString =>
-            $"Server={_server};Database={_db};Trusted_Connection=True;Integrated Security=SSPI;MultipleActiveResultSets=true";
+                $"Server={_server};Database={_db};Trusted_Connection=True;Integrated Security=SSPI;MultipleActiveResultSets=true";
+
 
         public void UpdateOrCreateDb(string stringDbData)
         {
             CreateDbIfNotExist();
+
 
             var deleteDbTable = SqlServerQueries.TruncateTable.WithParameters(_tableNameForDbTable);
             NonQuery(deleteDbTable);
@@ -46,6 +49,7 @@ namespace DB_Engine.DbProviders.Implementations
 
         private void CreateDbIfNotExist()
         {
+
             string connectToMasterDb = $"Server={_server};Integrated security=SSPI;database=master";
 
             using (SqlConnection connection = new SqlConnection(connectToMasterDb))
@@ -68,6 +72,7 @@ namespace DB_Engine.DbProviders.Implementations
 
         public void CreateTable()
         {
+
             var expression = SqlServerQueries.CreateTableIfNotExist.WithParameters(_table);
 
             NonQuery(expression);
@@ -77,23 +82,27 @@ namespace DB_Engine.DbProviders.Implementations
         {
             var expression = SqlServerQueries.DeleteTableIfExist.WithParameters(_table);
 
+
             NonQuery(expression);
         }
 
         public List<string> GetData()
         {
             return Select();
+
         }
 
         public async Task<List<string>> GetDataAsync()
         {
             return await Task.Run(Select);
+
         }
 
         public void InsertData(List<string> data)
         {
             var insertValues = GetInsertValues(data);
             var expression = SqlServerQueries.Insert.WithParameters(_table, insertValues);
+
 
             NonQuery(expression);
         }
@@ -105,6 +114,7 @@ namespace DB_Engine.DbProviders.Implementations
                 var insertValues = GetInsertValues(data);
                 var expression = SqlServerQueries.Insert.WithParameters(_table, insertValues);
 
+
                 NonQuery(expression);
             });
         }
@@ -113,6 +123,7 @@ namespace DB_Engine.DbProviders.Implementations
             var expression = SqlServerQueries.TruncateTable.WithParameters(_table);
 
             NonQuery(expression);
+
         }
         public string GetDb()
         {
@@ -124,6 +135,7 @@ namespace DB_Engine.DbProviders.Implementations
 
                 SqlCommand command = new SqlCommand(expression, connection);
                 SqlDataReader reader = command.ExecuteReader();
+
 
                 if (reader.HasRows)
                 {
@@ -141,6 +153,7 @@ namespace DB_Engine.DbProviders.Implementations
 
             using (SqlConnection connection = new SqlConnection(connectToMasterDb))
             {
+
                 connection.Open();
                 string expression = SqlServerQueries.DeleteDbIfExist.WithParameters(_db);
                 SqlCommand command = new SqlCommand(expression, connection);
@@ -154,6 +167,7 @@ namespace DB_Engine.DbProviders.Implementations
 
             using (SqlConnection connection = new SqlConnection(connectToMasterDb))
             {
+
                 connection.Open();
                 string expression = SqlServerQueries.SelectAllDbsNames;
                 SqlCommand command = new SqlCommand(expression, connection);
@@ -173,6 +187,7 @@ namespace DB_Engine.DbProviders.Implementations
         private string GetInsertValues(List<string> data)
         {
             StringBuilder sb = new StringBuilder();
+
             foreach (var row in data)
             {
                 sb.Append($"('{row}'),");
@@ -186,6 +201,7 @@ namespace DB_Engine.DbProviders.Implementations
         {
             var expression = SqlServerQueries.SELECT.WithParameters(_table);
             var result = new List<string>();
+
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -209,6 +225,7 @@ namespace DB_Engine.DbProviders.Implementations
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
+
 
                 SqlCommand command = new SqlCommand(expression, connection);
 

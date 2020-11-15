@@ -12,17 +12,18 @@ namespace DB_Engine.Implementations
 {
     public class DbSource : ISource
     {
-        public string Url { get; set; }
+        public string Url { get; set;  }
 
-        public string Type => typeof(DbSource).AssemblyQualifiedName;
+        public string Type =>  typeof(DbSource).AssemblyQualifiedName;
 
-        public long SizeInBytes => default;
+        public long SizeInBytes  => default;
 
         protected IDbProvider _dbProvider;
         protected IDbProvider DbProvider
         {
             get
             {
+
                 if (_dbProvider == null)
                 {
                     var data = Url.Split(GlobalSetting.Delimeter);
@@ -40,16 +41,19 @@ namespace DB_Engine.Implementations
         protected void Create()
         {
             DbProvider.CreateTable();
+
         }
 
         public void Delete()
         {
             DbProvider.DeleteTable();
+
         }
 
         public List<List<object>> GetData()
         {
             var listStringData = DbProvider.GetData();
+
 
             var data = listStringData.Select(x => JsonSerializer.Deserialize<List<object>>(x)).ToList();
             return data;
@@ -59,6 +63,7 @@ namespace DB_Engine.Implementations
         {
             var listStringData = await DbProvider.GetDataAsync();
 
+
             var data = listStringData.Select(x => JsonSerializer.Deserialize<List<object>>(x)).ToList();
             return data;
         }
@@ -67,6 +72,7 @@ namespace DB_Engine.Implementations
         {
             if (!(data == null || data.Count == 0))
             {
+
                 var newStringData = data.Select(x => JsonSerializer.Serialize(x)).ToList();
                 DbProvider.ClearTable();
                 DbProvider.InsertData(newStringData);
@@ -77,6 +83,7 @@ namespace DB_Engine.Implementations
         {
             if (!(data == null || data.Count == 0))
             {
+
                 var newStringData = data.Select(x => JsonSerializer.Serialize(x)).ToList();
 
                 await DbProvider.InsertDataAsync(newStringData);
@@ -85,6 +92,7 @@ namespace DB_Engine.Implementations
 
         public void SetUrl(DataBase db, Entity table)
         {
+
             Url = $"{db.Info.RootPath}{GlobalSetting.Delimeter}{db.Name}{GlobalSetting.Delimeter}{table.Name}";
             Create();
         }

@@ -14,6 +14,7 @@ namespace DB_Engine.Implementations.DbWriters
         {
             var client = DbProviderFactory.GetMongoClient(dataBase.Info.RootPath, dataBase.Name);
             client.DeleteDatabase();
+
         }
 
         public DataBase GetDb(string filePath)
@@ -23,12 +24,14 @@ namespace DB_Engine.Implementations.DbWriters
 
             string dbString = client.GetDb();
             return JsonSerializer.Deserialize<DataBase>(dbString);
+
         }
 
         public List<string> GetDbsNames(string rootPath)
         {
             var client = DbProviderFactory.GetMongoClient(rootPath, string.Empty);
             return client.GetDbsNames();
+
         }
 
         public void UpdateDb(DataBase dataBase)
@@ -36,6 +39,7 @@ namespace DB_Engine.Implementations.DbWriters
             var client = DbProviderFactory.GetMongoClient(dataBase.Info.RootPath, dataBase.Name);
             string stringData = JsonSerializer.Serialize(dataBase);
             client.UpdateOrCreateDb(stringData);
+
         }
     }
 }
