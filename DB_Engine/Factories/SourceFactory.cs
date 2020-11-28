@@ -29,6 +29,7 @@ namespace DB_Engine.Factories
 
                 if (_dbWriter == null)
                     _dbWriter = new MongoDbWriter();
+                    //_dbWriter = new SqlServerDbWriter();
                 return _dbWriter;
             }
             set

@@ -28,6 +28,8 @@ namespace DB_Engine.Implementations
                 {
                     var data = Url.Split(GlobalSetting.Delimeter);
                     _dbProvider = DbProviderFactory.GetMongoClient(data[0], data[1], data[2]);
+
+                    //_dbProvider = DbProviderFactory.GetSqlServcerClient(data[0], data[1], data[2]);
                 }
 
                 return _dbProvider;
