@@ -1,7 +1,10 @@
-﻿using DB_Engine.Implementations.Servises;
+﻿using DB_Engine.Extentions;
+using DB_Engine.Factories;
+using DB_Engine.Implementations.Servises;
 using DB_Engine.Interfaces;
 using DB_Engine.Types;
 using DB_Engine.Validators;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
@@ -9,6 +12,7 @@ namespace ConsoleClient
 {
     class Program
     {
+
         public static void ConsoleOut(List<List<object>> table, bool flag = false)
         {
             foreach (var row in table)
@@ -24,13 +28,23 @@ namespace ConsoleClient
                 Console.WriteLine("--------------------------------------------------");
 
         }
+
+        public static IServiceProvider Initialize()
+        {
+            var serviceProvider = new ServiceCollection()
+                .AddCustomDbEngine()
+                .BuildServiceProvider();
+            return serviceProvider;
+        }
         static void Main(string[] args)
         {
+            var serviceProvider = Initialize();
+            var dbServiceFactory = serviceProvider.GetService<IDataBaseServiceFactory>();
             string name = "Test";
             long fileSize = 1000000;
             string path = @"D:\Programming\4term\IT\Proj";
             //IDataBaseService dataBaseService = new DataBaseService(name, path, fileSize);
-            IDataBaseService dataBaseService = new DataBaseService(path + "\\Test.vldb");
+            IDataBaseService dataBaseService = dbServiceFactory.GetDataBaseService(path + "\\Test.vldb");
             //dataBaseService.AddTable("Table1");
             //dataBaseService.AddTable("Table2");
             var table1 = dataBaseService.GetEntityService("Table1");

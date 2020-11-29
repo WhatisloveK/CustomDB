@@ -16,9 +16,10 @@ namespace DB_EngineTest
     [TestFixture]
     public class EntityServiceTest
     {
+
         private IStorage _storage;
         private IDataBaseService dataBaseService;
-
+        
 
         [SetUp]
         public void Initialize()

@@ -10,9 +10,17 @@ namespace DB_Engine.Implementations.DbWriters
 {
     class MongoDbWriter : IDbWriter
     {
+
+        private IDbProviderFactory _dbProviderFactory;
+
+        public MongoDbWriter(IDbProviderFactory dbProviderFactory)
+        {
+            _dbProviderFactory = dbProviderFactory;
+        }
+
         public void DeleteDb(DataBase dataBase)
         {
-            var client = DbProviderFactory.GetMongoClient(dataBase.Info.RootPath, dataBase.Name);
+            var client = _dbProviderFactory.GetMongoClient(dataBase.Info.RootPath, dataBase.Name);
             client.DeleteDatabase();
 
         }
@@ -20,7 +28,7 @@ namespace DB_Engine.Implementations.DbWriters
         public DataBase GetDb(string filePath)
         {
             var data = filePath.Split(GlobalSetting.Delimeter);
-            var client = DbProviderFactory.GetMongoClient(data[0], data[1]);
+            var client = _dbProviderFactory.GetMongoClient(data[0], data[1]);
 
             string dbString = client.GetDb();
             return JsonSerializer.Deserialize<DataBase>(dbString);
@@ -29,14 +37,14 @@ namespace DB_Engine.Implementations.DbWriters
 
         public List<string> GetDbsNames(string rootPath)
         {
-            var client = DbProviderFactory.GetMongoClient(rootPath, string.Empty);
+            var client = _dbProviderFactory.GetMongoClient(rootPath, string.Empty);
             return client.GetDbsNames();
 
         }
 
         public void UpdateDb(DataBase dataBase)
         {
-            var client = DbProviderFactory.GetMongoClient(dataBase.Info.RootPath, dataBase.Name);
+            var client = _dbProviderFactory.GetMongoClient(dataBase.Info.RootPath, dataBase.Name);
             string stringData = JsonSerializer.Serialize(dataBase);
             client.UpdateOrCreateDb(stringData);
 

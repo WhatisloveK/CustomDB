@@ -1,4 +1,5 @@
-﻿using DB_Engine.Interfaces;
+﻿using DB_Engine.Factories;
+using DB_Engine.Interfaces;
 using DB_Engine.Models;
 using DB_Engine.Types;
 using System;
@@ -17,15 +18,17 @@ namespace WinFormClient
     public partial class Main : Form
     {
         private DbManager _formManager;
-
-        public Main()
+        private IServiceProvider _serviceProvider;
+        public Main(IServiceProvider serviceProvider)
         {
+            _serviceProvider = serviceProvider;
             InitializeComponent();
             InitMenu();
             CommonControls.FlowLayoutPanelTopMenu = flowLayoutPanelTopMenu;
             CommonControls.StructureTreeView = structureTreeView;
             dataGridView.AllowUserToAddRows = false;
-            _formManager = new DbManager();
+
+            _formManager = new DbManager(_serviceProvider);
 
             var contextMenu = ControlsHelper.GetContextMenuStrip(DataGridMenuList);
 

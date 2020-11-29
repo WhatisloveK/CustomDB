@@ -12,6 +12,8 @@ namespace DB_Engine.Implementations.Servises
     public class DataBaseService : IDataBaseService
     {
         private IStorage _storage;
+        private IStorageFactory _storageFactory;
+        private IEntityServiceFactory _entityServiceFactory;
         public DataBase DataBase { get; set; }
 
         public string Name => DataBase.Name;
@@ -20,26 +22,31 @@ namespace DB_Engine.Implementations.Servises
         private string _dataBaseFile => $"{DataBase.Name}{GlobalSetting.Extention}";
         public IEntityService GetEntityService(string tableName)
         {
-            return EntityServiceFactory.GetEntityService(DataBase.Entities.Find(x => x.Name == tableName), _storage);
+            return _entityServiceFactory.GetEntityService(DataBase.Entities.Find(x => x.Name == tableName), _storage);
         }
 
-        public DataBaseService(string name, string rootPath, long fileSize)
+        public DataBaseService(string name, string rootPath, long fileSize, 
+               IStorageFactory storageFactory, IEntityServiceFactory entityServiceFactory)
         {
+            _storageFactory = storageFactory;
+            _entityServiceFactory = entityServiceFactory;
             
             DataBase = new DataBase
             {
                 Name = name,
                 Info = new DatabaseInfo { RootPath = rootPath, FileSize = fileSize }
             };
-            _storage = StorageFactory.GetStorage(DataBase);
+            _storage = _storageFactory.GetStorage(DataBase);
 
             _storage.UpdateDataBaseStructure();
            
         }
 
-        public DataBaseService(string path)
+        public DataBaseService(string path, IStorageFactory storageFactory, IEntityServiceFactory entityServiceFactory)
         {
-            _storage = StorageFactory.GetStorage(DataBase);
+            _storageFactory = storageFactory;
+            _entityServiceFactory = entityServiceFactory;
+            _storage = _storageFactory.GetStorage(DataBase);
             DataBase = _storage.GetDataBaseFromFile(path);
 
             _storage.DataBase = DataBase;

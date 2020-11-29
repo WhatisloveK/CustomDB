@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DB_Engine.Factories;
 using DB_Engine.Implementations.Servises;
 using DB_Engine.Interfaces;
 using Google.Protobuf.Collections;
@@ -13,17 +14,20 @@ namespace GrpcServer
 {
     public class DatabaseService: DBService.DBServiceBase
     {
+        private IDataBaseServiceFactory _dataBaseServiceFactory;
+
         private readonly ILogger<DatabaseService> _logger;
-        public DatabaseService(ILogger<DatabaseService> logger)
+        public DatabaseService(ILogger<DatabaseService> logger, IDataBaseServiceFactory dataBaseServiceFactory)
         {
             _logger = logger;
+            _dataBaseServiceFactory = dataBaseServiceFactory;
         }
         private string root  = "D:\\Programming\\4term\\IT\\DBFILES\\grpc\\";
         public override Task<BaseReply> CreateDatabase(CreateDbRequest request, ServerCallContext context)
         {
             try
             {
-                IDataBaseService databaseService = new DataBaseService(request.Name, request.RootPath, request.FileSize);
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(request.Name, request.RootPath, request.FileSize);
 
                 Console.WriteLine();
                 Console.WriteLine();
@@ -43,7 +47,7 @@ namespace GrpcServer
         {
             try
             {
-                IDataBaseService databaseService = new DataBaseService(root + request.DbName+".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName+".vldb");
                 databaseService.AddTable(request.TableName);
 
                 Console.WriteLine();
@@ -65,7 +69,7 @@ namespace GrpcServer
 
             try
             {
-                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
                 databaseService.DeleteTable(request.TableName);
 
                 Console.WriteLine();
@@ -86,7 +90,7 @@ namespace GrpcServer
         {
             try
             {   
-                IDataBaseService databaseService = new DataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
                 var response = new GetTableListReply()
                 {
                     Code = 200
