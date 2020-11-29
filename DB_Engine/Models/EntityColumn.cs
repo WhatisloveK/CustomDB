@@ -29,5 +29,13 @@ namespace DB_Engine.Models
         {
             return Name;
         }
+
+        public override bool Equals(object obj)
+        {
+            var field = (EntityColumn)obj;
+
+            return Name == field.Name
+                && DataValueType == field.DataValueType;
+        }
     }
 }

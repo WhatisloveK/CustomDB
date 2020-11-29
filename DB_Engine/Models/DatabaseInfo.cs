@@ -14,5 +14,19 @@ namespace DB_Engine.Models
         public long FileSize { get; set; }
 
         //public SupportedSources DefaultSource { get; set; }
+
+        public override bool Equals(object obj)
+        {
+
+            var settings = (DatabaseInfo)obj;
+
+            return RootPath == settings.RootPath
+                && FileSize == settings.FileSize;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

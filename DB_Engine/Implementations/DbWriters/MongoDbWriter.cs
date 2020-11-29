@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace DB_Engine.Implementations.DbWriters
 {
-    class MongoDbWriter : IDbWriter
+    public class MongoDbWriter : IDbWriter
     {
 
         private IDbProviderFactory _dbProviderFactory;

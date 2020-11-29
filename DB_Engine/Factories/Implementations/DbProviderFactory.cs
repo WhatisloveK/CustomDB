@@ -8,7 +8,7 @@ namespace DB_Engine.Factories
 {
     class DbProviderFactory: IDbProviderFactory
     {
-        public  IDbProvider GetSqlServcerClient(string localhost, string db, string table = "")
+        public  IDbProvider GetSqlServerClient(string localhost, string db, string table = "")
         {
             return new SqlServerDbProvider(localhost, db, table);
 

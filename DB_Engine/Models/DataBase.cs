@@ -21,5 +21,35 @@ namespace DB_Engine.Models
             Entities = new List<Entity>();
             Info = new DatabaseInfo();
         }
+
+        public override bool Equals(object obj)
+        {
+            if(obj == null)
+            {
+                return false;
+            }
+            var db = (DataBase)obj;
+
+            return Name == db.Name
+                && Info.Equals(db.Info)
+                && new Func<bool>(() =>  //Compare table
+                {
+                    if (Entities.Count == db.Entities.Count)
+                    {
+                        for (int i = 0; i < Entities.Count; i++)
+                        {
+                            if (!Entities[i].Equals(db.Entities[i]))
+                                return false;
+                        }
+                        return true;
+                    }
+                    return false;
+                }).Invoke();
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

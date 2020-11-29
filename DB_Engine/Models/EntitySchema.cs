@@ -14,5 +14,28 @@ namespace DB_Engine.Models
         {
             Columns = new List<EntityColumn>();
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+            var schema = (EntitySchema)obj;
+            if (schema.Columns.Count == Columns.Count)
+            {
+                for (int i = 0; i < Columns.Count; i++)
+                {
+                    if (!Columns[i].Equals(schema.Columns[i]))
+                        return false;
+                }
+                return true;
+            }
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

@@ -8,7 +8,7 @@ using System.Text.Json;
 
 namespace DB_Engine.Implementations.DbWriters
 {
-    class SqlServerDbWriter: IDbWriter
+    public class SqlServerDbWriter: IDbWriter
     {
         private IDbProviderFactory _dbProviderFactory;
 
@@ -19,7 +19,7 @@ namespace DB_Engine.Implementations.DbWriters
 
         public void DeleteDb(DataBase dataBase)
         {
-            var client = _dbProviderFactory.GetSqlServcerClient(dataBase.Info.RootPath, dataBase.Name);
+            var client = _dbProviderFactory.GetSqlServerClient(dataBase.Info.RootPath, dataBase.Name);
             client.DeleteDatabase();
 
         }
@@ -27,7 +27,7 @@ namespace DB_Engine.Implementations.DbWriters
         public DataBase GetDb(string filePath)
         {
             var data = filePath.Split(GlobalSetting.Delimeter);
-            var client = _dbProviderFactory.GetSqlServcerClient(data[0], data[1]);
+            var client = _dbProviderFactory.GetSqlServerClient(data[0], data[1]);
 
             string dbString = client.GetDb();
             return JsonSerializer.Deserialize<DataBase>(dbString);
@@ -36,14 +36,14 @@ namespace DB_Engine.Implementations.DbWriters
 
         public List<string> GetDbsNames(string rootPath)
         {
-            var client = _dbProviderFactory.GetSqlServcerClient(rootPath, string.Empty);
+            var client = _dbProviderFactory.GetSqlServerClient(rootPath, string.Empty);
             return client.GetDbsNames();
 
         }
 
         public void UpdateDb(DataBase dataBase)
         {
-            var client = _dbProviderFactory.GetSqlServcerClient(dataBase.Info.RootPath, dataBase.Name);
+            var client = _dbProviderFactory.GetSqlServerClient(dataBase.Info.RootPath, dataBase.Name);
             string stringData = JsonSerializer.Serialize(dataBase);
             client.UpdateOrCreateDb(stringData);
 

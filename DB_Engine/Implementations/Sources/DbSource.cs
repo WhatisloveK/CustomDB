@@ -12,7 +12,7 @@ namespace DB_Engine.Implementations
 {
     public class DbSource : ISource
     {
-        private IDbProviderFactory _dbProviderFactory;
+        protected IDbProviderFactory _dbProviderFactory;
 
         public string Url { get; set;  }
 
@@ -21,7 +21,7 @@ namespace DB_Engine.Implementations
         public long SizeInBytes  => default;
 
         protected IDbProvider _dbProvider;
-        protected IDbProvider DbProvider
+        protected virtual IDbProvider DbProvider
         {
             get
             {
@@ -104,6 +104,19 @@ namespace DB_Engine.Implementations
 
             Url = $"{db.Info.RootPath}{GlobalSetting.Delimeter}{db.Name}{GlobalSetting.Delimeter}{table.Name}";
             Create();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var source = (ISource)obj;
+
+            return Type == source.Type
+                && Url == source.Url;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }
