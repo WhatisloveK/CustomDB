@@ -12,18 +12,13 @@ namespace GrpcClient
 {
     public class TableService
     {
-        private readonly GrpcChannel channel;
-        private readonly EntityService.EntityServiceClient client;
+        
+        private readonly EntityService.EntityServiceClient _client;
 
-        public TableService()
+        public TableService(EntityService.EntityServiceClient client)
         {
-            var httpHandler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback =
-                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-            channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions { HttpHandler = httpHandler });
-            client = new EntityService.EntityServiceClient(channel);
+            _client = client;
+           
         }
 
         private void WriteToConsole(string message)
@@ -46,7 +41,7 @@ namespace GrpcClient
             if(validators!=null)
                 request.Validators.AddRange(validators);
 
-            var reply = await client.AddColumnAsync(request);
+            var reply = await _client.AddColumnAsync(request);
 
             
             if (reply.Code == 200)
@@ -62,7 +57,7 @@ namespace GrpcClient
 
         public  async Task DropColumn(string dbname, string tableName, string columnName)
         {
-            var reply = await client.DropColumnAsync(new DropColumnRequst
+            var reply = await _client.DropColumnAsync(new DropColumnRequst
             {
                 DbName = dbname,
                 TableName = tableName,
@@ -89,7 +84,7 @@ namespace GrpcClient
 
             request.Rows.AddRange(rows);
 
-            var reply = await client.InsertAsync(request);
+            var reply = await _client.InsertAsync(request);
             if (reply.Code == 200)
             {
                 WriteToConsole("Rows inserted.");
@@ -110,7 +105,7 @@ namespace GrpcClient
 
             request.Guids.AddRange(guids);
 
-            var reply = await client.DeleteAsync(request);
+            var reply = await _client.DeleteAsync(request);
 
             if (reply.Code == 200)
             {
@@ -131,7 +126,7 @@ namespace GrpcClient
                 ShowSysColumns = showSysColumns
             };
 
-            var reply = await client.SelectAsync(request);
+            var reply = await _client.SelectAsync(request);
 
             if (reply.Code == 200)
             {
@@ -155,7 +150,7 @@ namespace GrpcClient
             };
 
             request.Rows.AddRange(rows);
-            var reply = await client.UpdateAsync(request);
+            var reply = await _client.UpdateAsync(request);
             if (reply.Code == 200)
             {
                 WriteToConsole("Updated successfully");
@@ -178,7 +173,7 @@ namespace GrpcClient
                 ShowSysColumns = showSystemColumns
             };
 
-            var reply = await client.InnerJoinAsync(request);
+            var reply = await _client.InnerJoinAsync(request);
             if (reply.Code == 200)
             {
                 for (int i = 0; i < reply.Rows.Count; i++)
@@ -202,7 +197,7 @@ namespace GrpcClient
                 ShowSysColumns = showSystemColumns
             };
 
-            var reply = await client.CrossJoinAsync(request);
+            var reply = await _client.CrossJoinAsync(request);
             if (reply.Code == 200)
             {
                 for (int i = 0; i < reply.Rows.Count; i++)

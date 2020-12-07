@@ -8,7 +8,7 @@ using System.Text;
 
 namespace DB_EngineTest.SourceTests
 {
-    public class MssqlDbServerTest : DbSourceTest
+    public class MssqlDbServerTest : DbSourceBaseTest
     {
         protected override void Setup()
         {

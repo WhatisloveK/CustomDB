@@ -15,7 +15,7 @@ using static DB_EngineTest.TestData;
 namespace DB_EngineTest.SourceTests
 {
     [TestFixture]
-    public abstract class DbSourceTest
+    public abstract class DbSourceBaseTest
     {
         protected ISource _source;
         protected Mock<IDbProvider> _dbProviderMock;

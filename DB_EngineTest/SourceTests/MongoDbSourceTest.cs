@@ -8,7 +8,7 @@ using System.Text;
 
 namespace DB_EngineTest.SourceTests
 {
-    public class MongoDbSourceTest : DbSourceTest
+    public class MongoDbSourceTest : DbSourceBaseTest
     {
         protected override void Setup()
         {

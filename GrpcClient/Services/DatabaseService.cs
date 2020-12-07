@@ -15,18 +15,11 @@ namespace GrpcClient
     public class DatabaseService
     {
         
-        private readonly GrpcChannel channel;
-        private readonly DBService.DBServiceClient client;
+        private readonly DBService.DBServiceClient _client;
 
-        public DatabaseService()
+        public DatabaseService(DBService.DBServiceClient client)
         {
-            var httpHandler = new HttpClientHandler
-            {
-                ServerCertificateCustomValidationCallback =
-                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-            };
-            channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions { HttpHandler = httpHandler });
-            client = new DBService.DBServiceClient(channel);
+            _client = client;
         }
         private void WriteToConsole(string message)
         {
@@ -44,7 +37,7 @@ namespace GrpcClient
                 FileSize = filesize
             };
 
-            var reply = await client.CreateDatabaseAsync(request);
+            var reply = await _client.CreateDatabaseAsync(request);
 
             
             if (reply.Code == 200)
@@ -60,7 +53,7 @@ namespace GrpcClient
 
         public  async Task CreateTable(string dbName, string tableName)
         {
-            var reply = await client.CreateTableAsync(new TableRequest
+            var reply = await _client.CreateTableAsync(new TableRequest
             {
                 DbName = dbName,
                 TableName = tableName
@@ -79,7 +72,7 @@ namespace GrpcClient
 
         public  async Task DeleteTable(string dbName, string tableName)
         {
-            var reply = await client.DeleteTableAsync(new TableRequest
+            var reply = await _client.DeleteTableAsync(new TableRequest
             {
                 DbName = dbName,
                 TableName = tableName
@@ -98,7 +91,7 @@ namespace GrpcClient
 
         public  async Task GetTableList(string dbName)
         {
-            var reply = await client.GetTableListAsync(new GetTableListRequest
+            var reply = await _client.GetTableListAsync(new GetTableListRequest
             {
                 DbName = dbName
             });

@@ -28,7 +28,7 @@ namespace DB_Engine.Implementations
 
         }
 
-        public void AddColoumn(Entity entity)
+        public void AddColumn(Entity entity)
         {
             if (entity.Sources == null || entity.Sources.Count == 0)
             {

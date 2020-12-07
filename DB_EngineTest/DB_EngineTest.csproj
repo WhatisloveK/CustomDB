@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DB_Engine\DB_Engine.csproj" />
+    <ProjectReference Include="..\GrpcClient\GrpcClient.csproj" />
   </ItemGroup>
 
 </Project>
