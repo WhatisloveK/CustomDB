@@ -4,9 +4,9 @@ using DB_Engine.Models;
 
 namespace DB_Engine.Factories
 {
-    public class EntityServiceFactory
+    public class EntityServiceFactory : IEntityServiceFactory
     {
-        public static IEntityService GetEntityService(Entity entity, IStorage storage)
+        public IEntityService GetEntityService(Entity entity, IStorage storage)
         {
             return new EntityService(entity, storage);
         }

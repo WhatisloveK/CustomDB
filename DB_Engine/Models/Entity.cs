@@ -28,5 +28,36 @@ namespace DB_Engine.Models
             Items = new List<List<object>>();
             Schema = new EntitySchema();
         }
+
+        public override bool Equals(object obj)
+        {
+            if(obj == null)
+            {
+                return false;
+            }
+            var table = (Entity)obj;
+
+            return Name == table.Name
+                && Schema.Equals(table.Schema)
+                && new Func<bool>(() =>
+                {
+                    if (Sources.Count == table.Sources.Count)
+                    {
+                        for (int i = 0; i < Sources.Count; i++)
+                        {
+                            if (Sources[i].Equals(table.Sources[i]))
+                                return false;
+                        }
+                        return true;
+                    }
+                    return false;
+                }).Invoke();
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
     }
 }

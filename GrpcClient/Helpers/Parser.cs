@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GrpcClient
 {
-    class Parser
+    public class Parser
     {
         private readonly Dictionary<string, List<string>> commands = new Dictionary<string, List<string>>()
         {
@@ -45,9 +45,14 @@ namespace GrpcClient
             };
         }
 
-        private readonly DatabaseService databaseService = new DatabaseService();
-        private readonly TableService tableService = new TableService();
+        private readonly DatabaseService databaseService;
+        private readonly TableService tableService;
 
+        public Parser(EntityService.EntityServiceClient entityClient, DBService.DBServiceClient dbClient)
+        {
+            tableService = new TableService(entityClient);
+            databaseService = new DatabaseService(dbClient);
+        }
 
         public async Task Parse(string input)
         {

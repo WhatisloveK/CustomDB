@@ -46,7 +46,7 @@ namespace DB_Engine.Implementations.Servises
             Entity.Schema.Columns.Add(new EntityColumn { Name = name, DataValueType = dataValueTypeId, Validators = validators });
             _storage.UpdateDataBaseStructure();
 
-            _storage.AddColoumn(Entity);
+            _storage.AddColumn(Entity);
         }
 
         public void AddColumn(EntityColumn field)
@@ -58,7 +58,7 @@ namespace DB_Engine.Implementations.Servises
             Entity.Schema.Columns.Add(field);
             _storage.UpdateDataBaseStructure();
 
-            _storage.AddColoumn(Entity);
+            _storage.AddColumn(Entity);
         }
 
         public void DropColumn(string name)

@@ -12,6 +12,8 @@ namespace DB_Engine.Implementations
 {
     public class DbSource : ISource
     {
+        protected IDbProviderFactory _dbProviderFactory;
+
         public string Url { get; set;  }
 
         public string Type =>  typeof(DbSource).AssemblyQualifiedName;
@@ -19,7 +21,7 @@ namespace DB_Engine.Implementations
         public long SizeInBytes  => default;
 
         protected IDbProvider _dbProvider;
-        protected IDbProvider DbProvider
+        protected virtual IDbProvider DbProvider
         {
             get
             {
@@ -27,7 +29,7 @@ namespace DB_Engine.Implementations
                 if (_dbProvider == null)
                 {
                     var data = Url.Split(GlobalSetting.Delimeter);
-                    _dbProvider = DbProviderFactory.GetMongoClient(data[0], data[1], data[2]);
+                    _dbProvider = _dbProviderFactory.GetMongoClient(data[0], data[1], data[2]);
 
                     //_dbProvider = DbProviderFactory.GetSqlServcerClient(data[0], data[1], data[2]);
                 }
@@ -38,6 +40,11 @@ namespace DB_Engine.Implementations
             {
                 _dbProvider = value;
             }
+        }
+
+        public DbSource(IDbProviderFactory dbProviderFactory) 
+        {
+            this._dbProviderFactory = dbProviderFactory;
         }
 
         protected void Create()
@@ -97,6 +104,19 @@ namespace DB_Engine.Implementations
 
             Url = $"{db.Info.RootPath}{GlobalSetting.Delimeter}{db.Name}{GlobalSetting.Delimeter}{table.Name}";
             Create();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var source = (ISource)obj;
+
+            return Type == source.Type
+                && Url == source.Url;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

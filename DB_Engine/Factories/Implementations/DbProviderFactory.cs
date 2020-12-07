@@ -6,15 +6,15 @@ using System.Text;
 
 namespace DB_Engine.Factories
 {
-    class DbProviderFactory
+    class DbProviderFactory: IDbProviderFactory
     {
-        public static IDbProvider GetSqlServcerClient(string localhost, string db, string table = "")
+        public  IDbProvider GetSqlServerClient(string localhost, string db, string table = "")
         {
             return new SqlServerDbProvider(localhost, db, table);
 
         }
 
-        public static IDbProvider GetMongoClient(string localhost, string db, string table = "")
+        public  IDbProvider GetMongoClient(string localhost, string db, string table = "")
         {
             return new MongoDbProvider(localhost, db, table);
 

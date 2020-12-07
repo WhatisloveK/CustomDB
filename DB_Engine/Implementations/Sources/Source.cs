@@ -69,5 +69,14 @@ namespace DB_Engine.Implementations
         {
             using (File.Create(Url)) { }
         }
+
+        public override bool Equals(object obj)
+        {
+            var source = (ISource)obj;
+
+            return Type == source.Type
+                && Url == source.Url;
+        }
+
     }
 }

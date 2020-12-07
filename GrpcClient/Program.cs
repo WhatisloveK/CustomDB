@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Grpc.Net.Client;
+using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace GrpcClient
@@ -8,7 +10,15 @@ namespace GrpcClient
         
         static async Task Main(string[] args)
         {
-            var parser = new Parser();
+            var httpHandler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+               HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            };
+            GrpcChannel channel = GrpcChannel.ForAddress("https://localhost:5001", new GrpcChannelOptions { HttpHandler = httpHandler });
+            EntityService.EntityServiceClient entityClient = new EntityService.EntityServiceClient(channel);
+            DBService.DBServiceClient dbServiceClient = new DBService.DBServiceClient(channel);
+            var parser = new Parser(entityClient, dbServiceClient);
 
             while (true)
             {

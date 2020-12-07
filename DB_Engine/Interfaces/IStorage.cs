@@ -11,7 +11,7 @@ namespace DB_Engine.Interfaces
         DataBase GetDataBaseFromFile(string filePath);
         void UpdateDataBaseStructure();
         void DeleteEntitySources(Entity entity);
-        void AddColoumn(Entity entity);
+        void AddColumn(Entity entity);
         void DropColumn(Entity entity, int index);
         void Delete(Entity entity, Dictionary<string, List<IValidator>> conditions);
         void DeleteRange(Entity entity, List<Guid> guids);

@@ -14,19 +14,21 @@ namespace DB_Engine.Implementations
 {
     public class Storage : IStorage
     {
+        private ISourceFactory _sourceFactory;
         public DataBase DataBase { get; set; }
-        public Storage(DataBase dataBase)
+        public Storage(DataBase dataBase, ISourceFactory sourceFactory)
         {
             DataBase = dataBase;
+            _sourceFactory = sourceFactory;
         }
 
         public DataBase GetDataBaseFromFile(string filePath)
         {
-            return SourceFactory.GetDbWriter().GetDb(filePath);
+            return _sourceFactory.GetDbWriter().GetDb(filePath);
 
         }
 
-        public void AddColoumn(Entity entity)
+        public void AddColumn(Entity entity)
         {
             if (entity.Sources == null || entity.Sources.Count == 0)
             {
@@ -193,7 +195,7 @@ namespace DB_Engine.Implementations
 
         public void UpdateDataBaseStructure()
         {
-            SourceFactory.GetDbWriter().UpdateDb(DataBase);
+            _sourceFactory.GetDbWriter().UpdateDb(DataBase);
         }
 
         private bool PassAllValidators(List<IValidator> validators, object value)
@@ -213,7 +215,7 @@ namespace DB_Engine.Implementations
 
         private void AddNewSource(Entity entity)
         {
-            var source = SourceFactory.GetSourceObject(DataBase, entity);
+            var source = _sourceFactory.GetSourceObject(DataBase, entity);
 
             entity.Sources.Add(source);
 
