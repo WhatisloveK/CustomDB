@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DB_Engine.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -21,5 +22,6 @@ namespace DB_Engine.Interfaces
         Task<List<List<object>>> GetDataAsync();
         void WriteData(List<List<object>> data);
         Task WriteDataAsync(List<List<object>> data);
+        void SetUrl(DataBase db, Entity table);
     }
 }

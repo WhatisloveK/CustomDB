@@ -22,11 +22,8 @@ namespace DB_Engine.Implementations
 
         public DataBase GetDataBaseFromFile(string filePath)
         {
-            string data = File.ReadAllText(filePath);
+            return SourceFactory.GetDbWriter().GetDb(filePath);
 
-            var dataBase = JsonSerializer.Deserialize<DataBase>(data);
-
-            return dataBase;
         }
 
         public void AddColoumn(Entity entity)
@@ -196,9 +193,7 @@ namespace DB_Engine.Implementations
 
         public void UpdateDataBaseStructure()
         {
-            var stringData = JsonSerializer.Serialize(DataBase);
-
-            File.WriteAllText($"{DataBase.Info.RootPath}\\{DataBase.Name}{GlobalSetting.Extention}", stringData);
+            SourceFactory.GetDbWriter().UpdateDb(DataBase);
         }
 
         private bool PassAllValidators(List<IValidator> validators, object value)
@@ -218,10 +213,9 @@ namespace DB_Engine.Implementations
 
         private void AddNewSource(Entity entity)
         {
-            var source = SourceFactory.GetSourceObject($"{DataBase.Info.RootPath}\\{entity.Name}{entity.Sources.Count + 1}{GlobalSetting.Extention}");
+            var source = SourceFactory.GetSourceObject(DataBase, entity);
 
             entity.Sources.Add(source);
-            using (File.Create(source.Url)) { }
 
             UpdateDataBaseStructure();
         }

@@ -17,7 +17,7 @@ namespace WinFormClient
         {
             try
             {
-                IDataBaseService dataBaseService = new DataBaseService(path);
+                IDataBaseService dataBaseService = new DataBaseService($"{Settings.SqlServerName}|{path}");
                 var mainNode = new TreeNode(dataBaseService.DataBase.Name);
                 mainNode.Tag = dataBaseService;
                 foreach(var item in dataBaseService.DataBase.Entities)
@@ -39,7 +39,7 @@ namespace WinFormClient
         {
             IDataBaseService dataBaseService =
                 new DataBaseService(dbinfo.Name,
-                dbinfo.RootPath, dbinfo.FileSize);
+                Settings.SqlServerName, dbinfo.FileSize);
             var mainNode = new TreeNode(dataBaseService.DataBase.Name);
             mainNode.Tag = dataBaseService;
             CommonControls.StructureTreeView.Nodes.Add(mainNode);

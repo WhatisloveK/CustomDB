@@ -12,6 +12,7 @@ service DBService {
 }
 
 service EntityService {
+	rpc GetEntity (GetEntityRequest) returns (GetEntityReply);
 	rpc AddColumn (AddColumnRequest) returns (BaseReply);
     rpc DropColumn (DropColumnRequst) returns (BaseReply);
 	rpc Insert (InsertRequest) returns (BaseReply);
@@ -38,6 +39,23 @@ enum ComparsonType
    COMPARSON_TYPE_IS_NOT_NULL = 11;
    COMPARSON_TYPE_ENDS_WITH = 12;
    COMPARSON_TYPE_NOT_ENDS_WITH = 13;
+}
+
+message GetEntityRequest {
+	string dbName = 1;
+	string tableName = 2;
+}
+
+message Column {
+	string name = 1;
+	string dataValueTypeId = 2;
+}
+
+message GetEntityReply {
+	int32 code = 1;
+	string message = 2;
+	string stackTrace = 3;
+	repeated Column columns = 4;
 }
 
 message Validator {
