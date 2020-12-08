@@ -10,6 +10,9 @@ namespace DB_Engine.Implementations
     {
         public MongoDbSource(IDbProviderFactory dbProviderFactor): base(dbProviderFactor) 
         { }
+        public MongoDbSource()
+        { }
+
         protected override IDbProvider DbProvider
         {
             get
@@ -19,7 +22,7 @@ namespace DB_Engine.Implementations
                 {
                     var data = Url.Split(GlobalSetting.Delimeter);
 
-                    _dbProvider = _dbProviderFactory.GetMongoClient(data[0], data[1], data[2]);
+                    _dbProvider = dbProviderFactory.GetMongoClient(data[0], data[1], data[2]);
                 }
 
                 return _dbProvider;
