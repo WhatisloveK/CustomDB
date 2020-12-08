@@ -1,4 +1,5 @@
-﻿using DB_Engine.Interfaces;
+﻿using DB_Engine.Factories;
+using DB_Engine.Interfaces;
 using DB_Engine.Models;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,11 @@ namespace DB_Engine.Implementations
         public string Type => typeof(Source).AssemblyQualifiedName;
         public long SizeInBytes => new FileInfo(Url).Length;
 
+        public IDbProviderFactory dbProviderFactory { get; set; }
+
+        public Source()
+        {
+        }
 
         public async Task<List<List<object>>> GetDataAsync()
         {

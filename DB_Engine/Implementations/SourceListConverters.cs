@@ -1,4 +1,5 @@
-﻿using DB_Engine.Interfaces;
+﻿using DB_Engine.Factories;
+using DB_Engine.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,12 @@ namespace DB_Engine.Implementations
 {
     public class SourceListConverter : JsonConverter<List<ISource>>
     {
+        IDbProviderFactory _dbProviderFactory;
+
+        public SourceListConverter()
+        {
+            _dbProviderFactory = new DbProviderFactory();
+        }
         public override bool CanConvert(Type typeToConvert)
         {
 
@@ -28,6 +35,7 @@ namespace DB_Engine.Implementations
                 var sourceType = Type.GetType(x.GetProperty("type").GetString());
                 var element = JsonSerializer.Deserialize(x.GetRawText(), sourceType);
                 ISource sourceElement = (ISource)element;
+                sourceElement.dbProviderFactory = this._dbProviderFactory;
                 sourceElement.Url = x.GetProperty("url").GetString();
 
                 return sourceElement;

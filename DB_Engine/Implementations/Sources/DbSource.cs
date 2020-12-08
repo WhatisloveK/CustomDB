@@ -12,7 +12,7 @@ namespace DB_Engine.Implementations
 {
     public class DbSource : ISource
     {
-        protected IDbProviderFactory _dbProviderFactory;
+        public IDbProviderFactory dbProviderFactory { get; set; }
 
         public string Url { get; set;  }
 
@@ -29,7 +29,7 @@ namespace DB_Engine.Implementations
                 if (_dbProvider == null)
                 {
                     var data = Url.Split(GlobalSetting.Delimeter);
-                    _dbProvider = _dbProviderFactory.GetMongoClient(data[0], data[1], data[2]);
+                    _dbProvider = dbProviderFactory.GetMongoClient(data[0], data[1], data[2]);
 
                     //_dbProvider = DbProviderFactory.GetSqlServcerClient(data[0], data[1], data[2]);
                 }
@@ -44,7 +44,11 @@ namespace DB_Engine.Implementations
 
         public DbSource(IDbProviderFactory dbProviderFactory) 
         {
-            this._dbProviderFactory = dbProviderFactory;
+            this.dbProviderFactory = dbProviderFactory;
+        }
+
+        public DbSource()
+        {
         }
 
         protected void Create()

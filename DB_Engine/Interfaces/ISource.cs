@@ -1,4 +1,5 @@
-﻿using DB_Engine.Models;
+﻿using DB_Engine.Factories;
+using DB_Engine.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,6 +18,9 @@ namespace DB_Engine.Interfaces
 
         [JsonIgnore]
         long SizeInBytes { get; }
+
+        [JsonIgnore]
+        IDbProviderFactory dbProviderFactory { get; set; }
 
         List<List<object>> GetData();
         Task<List<List<object>>> GetDataAsync();

@@ -32,6 +32,10 @@ namespace DB_Engine.Models
 
         public override bool Equals(object obj)
         {
+            if(obj == null || !(obj is EntityColumn))
+            {
+                return false;
+            }
             var field = (EntityColumn)obj;
 
             return Name == field.Name
