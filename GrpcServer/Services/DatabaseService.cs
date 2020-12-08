@@ -17,17 +17,21 @@ namespace GrpcServer
         private IDataBaseServiceFactory _dataBaseServiceFactory;
 
         private readonly ILogger<DatabaseService> _logger;
-        public DatabaseService(ILogger<DatabaseService> logger, IDataBaseServiceFactory dataBaseServiceFactory)
+
+        private readonly Settings _settings;
+
+        public DatabaseService(ILogger<DatabaseService> logger, IDataBaseServiceFactory dataBaseServiceFactory, Settings settings)
         {
             _logger = logger;
             _dataBaseServiceFactory = dataBaseServiceFactory;
+            _settings = settings;
         }
         private string root  = "D:\\Programming\\4term\\IT\\DBFILES\\grpc\\";
         public override Task<BaseReply> CreateDatabase(CreateDbRequest request, ServerCallContext context)
         {
             try
             {
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(request.Name, request.RootPath, request.FileSize);
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(request.Name, _settings.MongoDbConnectionString, request.FileSize);
 
                 Console.WriteLine();
                 Console.WriteLine();
@@ -47,7 +51,7 @@ namespace GrpcServer
         {
             try
             {
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName+".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 databaseService.AddTable(request.TableName);
 
                 Console.WriteLine();
@@ -69,7 +73,7 @@ namespace GrpcServer
 
             try
             {
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 databaseService.DeleteTable(request.TableName);
 
                 Console.WriteLine();
@@ -90,7 +94,7 @@ namespace GrpcServer
         {
             try
             {   
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 var response = new GetTableListReply()
                 {
                     Code = 200

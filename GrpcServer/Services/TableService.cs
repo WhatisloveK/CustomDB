@@ -17,10 +17,11 @@ namespace GrpcServer.Services
     public class TableService : EntityService.EntityServiceBase
     {
         IDataBaseServiceFactory _dataBaseServiceFactory;
-
-        public TableService(IDataBaseServiceFactory dataBaseServiceFactory)
+        Settings _settings;
+        public TableService(IDataBaseServiceFactory dataBaseServiceFactory, Settings settings)
         {
             _dataBaseServiceFactory = dataBaseServiceFactory;
+            _settings = settings;
         }
 
         private readonly string root = "D:\\Programming\\4term\\IT\\DBFILES\\grpc\\";
@@ -41,7 +42,7 @@ namespace GrpcServer.Services
         {
             try
             {
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 var validators = new List<IValidator>();
 
@@ -74,7 +75,7 @@ namespace GrpcServer.Services
         {
             try
             {
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 entityService.DropColumn(request.ColumnName);
                 var response = new BaseReply()
@@ -100,7 +101,7 @@ namespace GrpcServer.Services
         {
             try
             {
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 if (request.Guids.Count > 0)
                 {
@@ -144,7 +145,7 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 var data = new List<List<object>>();
                 var resultRows = new RepeatedField<Row>();
@@ -194,7 +195,7 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 foreach(var column in entityService.Entity.Schema.Columns)
                 {
@@ -229,7 +230,7 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 IEntityService entityService = databaseService.GetEntityService(request.FirstTableName);
                 IEntityService entityService2 = databaseService.GetEntityService(request.SecondTableName);
                 var data = new List<List<object>>();
@@ -263,7 +264,7 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 IEntityService entityService = databaseService.GetEntityService(request.FirstTableName);
                 IEntityService entityService2 = databaseService.GetEntityService(request.SecondTableName);
                 var data = new List<List<object>>();
@@ -298,7 +299,7 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
                 var _columns = entityService.Entity.Schema.Columns;
                 var values = GetTypedRows(_columns, request.Rows);
@@ -326,7 +327,7 @@ namespace GrpcServer.Services
                 {
                     Code = 200
                 };
-                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService(root + request.DbName + ".vldb");
+                IDataBaseService databaseService = _dataBaseServiceFactory.GetDataBaseService($"{_settings.MongoDbConnectionString}|{request.DbName}");
                 IEntityService entityService = databaseService.GetEntityService(request.TableName);
 
                 var conditions = new Dictionary<string, List<IValidator>>();
